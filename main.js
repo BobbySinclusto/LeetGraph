@@ -1,7 +1,7 @@
 let START_GAME_FLAG = 0
 
 class DraggableBox {
-  constructor(x, y, width, height, description, color, inputs = 2, outputs = 2) {
+  constructor(x, y, width, height, description, inputs = 2, outputs = 2) {
     this.edgeConnections = [];
     this.corners = [];
     // Initialize corners array
@@ -13,8 +13,8 @@ class DraggableBox {
     this.height = height;
     this.width = width;
     this.description = description;
-    this.color = color;
-    this.text_color = [0,0,0];
+    this.color = [30, 40, 40];
+    this.text_color = [200,220,220];
     this.inputs = inputs;
     this.outputs = outputs;
   }
@@ -53,6 +53,9 @@ class DraggableBox {
     rect(this.x, this.y, this.width, this.height, 10);
 
     //connectable components
+    // Color to draw the corners:
+    fill(50, 150, 255);
+
     // Add inputs:
     // edge case where there's only one input
     if (this.inputs == 1) {
@@ -209,9 +212,9 @@ function setup() {
   mainGUI = new GUI()
 
   background(0);
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Bob", [255,255,255], 1, 3));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Joey", [255,255,255], 4, 1));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "asdf", [255,255,255], 2, 2));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Bob", 1, 3));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Joey", 4, 1));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "asdf", 2, 2));
 }
 
 
@@ -268,7 +271,7 @@ function mousePressed() {
       if (boxes[i].is_inside(mouseX, mouseY)) {
         current_box = boxes[i];
         current_offset = [mouseX - boxes[i].x, mouseY - boxes[i].y];
-        boxes[i].set_text_color([255,0,0]);
+        boxes[i].set_text_color([180,200,200]);
         break;
       }
     }
@@ -294,7 +297,7 @@ function mouseReleased() {
     current_corner = null;
   }
   if (current_box != null) {
-    current_box.set_text_color([0,0,0]);
+    current_box.set_text_color([200,220,220]);
     current_box = null;
     current_offset = null;
   }
