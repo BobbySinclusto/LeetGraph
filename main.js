@@ -2,6 +2,7 @@ let START_GAME_FLAG = 0
 
 class DraggableBox {
   constructor(x, y, width, height, description, color) {
+    this.edgeConnections = []
     this.x = x;
     this.y = y;
     this.height = height;
@@ -11,6 +12,11 @@ class DraggableBox {
     this.text_color = [0,0,0];
   }
 
+  // TODO: draw a line from one object to another for all the edgeConnections
+  drawPath() {
+    // prob can do some cool algorithm here
+
+  }
   set_text_color(color) {
     this.text_color = color;
   }
@@ -22,6 +28,11 @@ class DraggableBox {
   draw() {
     fill(this.color[0],this.color[1],this.color[2]);
     rect(this.x, this.y, this.width, this.height, 10);
+    //connectable components
+    ellipse(this.x, this.y, this.width/4)
+    ellipse(this.x+this.width, this.y, this.width/4)
+    ellipse(this.x+this.width, this.y+this.height, this.width/4)
+    ellipse(this.x, this.y+this.height, this.width/4)
     textAlign(CENTER, CENTER);
     fill(this.text_color[0],this.text_color[1],this.text_color[2]);
     text(this.description, this.x, this.y, this.width, this.height);
@@ -72,14 +83,21 @@ class GUI {
 var mainGUI;
 
 let boxes = [];
+let song;
 current_box = null;
 current_offset = null;
 
+function preload(){
+  song = loadSound('polish_cow.mp3');
+}
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
+
+  song.play()
   mainGUI = new GUI()
-  
-  background(51);
+
+  background(0);
   boxes.push(new DraggableBox(200, 200, 80, 80, "test", [255,255,255]));
   boxes.push(new DraggableBox(200, 200, 80, 80, "test", [255,255,255]));
 }
@@ -89,7 +107,7 @@ function setup() {
 function draw() {
   // Clear screen
   clear();
-  background(51);
+  background(5);
 
   // Check if mouse is over one of the elements
   if (current_box != null) {
@@ -110,6 +128,7 @@ function mousePressed() {
   // Check if mouse is over one of the elements
   for (var i = boxes.length - 1; i >= 0; --i) {
     if (boxes[i].is_inside(mouseX, mouseY)) {
+      // TODO: check if mouse is over one of the connections
       current_box = boxes[i];
       current_offset = [mouseX - boxes[i].x, mouseY - boxes[i].y];
       boxes[i].set_text_color([255,0,0]);
