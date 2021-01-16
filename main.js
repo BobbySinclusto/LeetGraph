@@ -1,9 +1,13 @@
 let START_GAME_FLAG = 0
 
 class DraggableBox {
-  constructor(x, y, width, height, description, color) {
+  constructor(x, y, width, height, description, color, inputs = 2, outputs = 2) {
     this.edgeConnections = [];
-    this.corners = [null, null, null, null];
+    this.corners = [];
+    // Initialize corners array
+    for (var i = 0; i < inputs + outputs; ++i) {
+      this.corners.push(null);
+    }
     this.x = x;
     this.y = y;
     this.height = height;
@@ -11,13 +15,10 @@ class DraggableBox {
     this.description = description;
     this.color = color;
     this.text_color = [0,0,0];
+    this.inputs = inputs;
+    this.outputs = outputs;
   }
 
-  // TODO: draw a line from one object to another for all the edgeConnections
-  drawPath() {
-    // prob can do some cool algorithm here
-
-  }
   set_text_color(color) {
     this.text_color = color;
   }
@@ -34,7 +35,7 @@ class DraggableBox {
     // Check which corner the mouse is clicking, or if it's clicking in the middle somewhere
     // First check the corners
     for (var corner in this.corners) {
-      if ((mouseX - this.corners[corner][0])**2 + (mouseY - this.corners[corner][1])**2 <= (this.corners[corner][2] / 2)**2) {
+      if (corner != null && (mouseX - this.corners[corner][0])**2 + (mouseY - this.corners[corner][1])**2 <= (this.corners[corner][2] / 2)**2) {
         return corner;
       }
     }
@@ -52,14 +53,30 @@ class DraggableBox {
     rect(this.x, this.y, this.width, this.height, 10);
 
     //connectable components
-    ellipse(this.x, this.y, this.width/4);
-    ellipse(this.x+this.width, this.y, this.width/4);
-    ellipse(this.x+this.width, this.y+this.height, this.width/4);
-    ellipse(this.x, this.y+this.height, this.width/4);
-    this.corners[0] = [this.x, this.y, this.width/4];
-    this.corners[1] = [this.x+this.width, this.y, this.width/4];
-    this.corners[2] = [this.x+this.width, this.y+this.height, this.width/4];
-    this.corners[3] = [this.x, this.y+this.height, this.width/4];
+    // Add inputs:
+    // edge case where there's only one input
+    if (this.inputs == 1) {
+      ellipse(this.x, this.y + this.height / 2, this.width/4);
+      this.corners[0] = [this.x, this.y + this.height / 2, this.width/4];
+    }
+    else {
+      for (var i = 0; i < this.inputs; ++i) {
+        ellipse(this.x, this.y + i * this.height / (this.inputs - 1), this.width/4);
+        this.corners[i] = [this.x, this.y + i * this.height / (this.inputs - 1), this.width/4];
+      }
+    }
+
+    // Add outputs:
+    if (this.outputs == 1) {
+      ellipse(this.x + this.width, this.y + this.height / 2, this.width/4);
+      this.corners[this.inputs] = [this.x + this.width, this.y + this.height / 2, this.width/4];
+    }
+    else {
+      for (var i = 0; i < this.outputs; ++i) {
+        ellipse(this.x + this.width, this.y + i * this.height / (this.outputs - 1), this.width/4);
+        this.corners[i + this.inputs] = [this.x + this.width, this.y + i * this.height / (this.outputs - 1), this.width/4];
+      }
+    }
 
     // Description text
     textAlign(CENTER, CENTER);
@@ -68,11 +85,19 @@ class DraggableBox {
 
     // Draw connections
     for (var connection of this.edgeConnections) {
-      stroke(50, 50, 255);
-      strokeWeight(10);
       let fromLoc = this.get_corner_location(connection[1]);
       let toLoc = connection[0].get_corner_location(connection[2]);
+      
+      // Thicker line first
+      stroke(50, 50, 255);
+      strokeWeight(10);
       line(fromLoc[0], fromLoc[1], toLoc[0], toLoc[1]);
+      // Thinner line next
+      stroke(50, 150, 255);
+      strokeWeight(5);
+      line(fromLoc[0], fromLoc[1], toLoc[0], toLoc[1]);
+
+      // Reset stroke stuff
       stroke(0);
       strokeWeight(1);
     }
@@ -184,9 +209,9 @@ function setup() {
   mainGUI = new GUI()
 
   background(0);
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Bob", [255,255,255]));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Joey", [255,255,255]));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "asdf", [255,0,255]));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Bob", [255,255,255], 1, 3));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Joey", [255,255,255], 4, 1));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "asdf", [255,255,255], 2, 2));
 }
 
 
@@ -210,10 +235,18 @@ function draw() {
   // Draw current connection if there is one
   if (current_corner != null) {
     // Start at whichever corner is selected
+    loc = current_corner[0].get_corner_location(current_corner[1]);
+    
+    // Thicker line first
     stroke(50, 50, 255);
     strokeWeight(10);
-    loc = current_corner[0].get_corner_location(current_corner[1]);
     line(loc[0],loc[1], mouseX, mouseY);
+    // Thinner line next
+    stroke(50, 150, 255);
+    strokeWeight(5);
+    line(loc[0],loc[1], mouseX, mouseY);
+
+    // Reset
     stroke(0);
     strokeWeight(1);
   }
