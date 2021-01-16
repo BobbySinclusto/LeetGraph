@@ -160,30 +160,35 @@ class GUI {
 
   addButtons() {
     this.GUIarray = []
-    let startButton = createButton('Start Game');
+    
+    let startButton = document.createElement('button');
+    startButton.textContent = "Start Game"
+    startButton.style = "position: absolute;top:20px;"
+    startButton.onclick = this.startGame.bind(this)
+    document.getElementById("rightCol").appendChild(startButton)
+    
     this.styledict = {
       'color': "rgb(225, 227, 198)",
       'background-color':'transparent',
       'border-color':'antiquewhite',
       'padding':'1%'
     }
-    startButton.position(windowWidth / 2, windowHeight / 2);
-    startButton.mousePressed(this.startGame.bind(this))
     for (let key in this.styledict) {
-      startButton.style(key,this.styledict[key])
+      //startButton.style(key,this.styledict[key])
     }
-    let aboutButton = createButton('About');
-    aboutButton.position(windowWidth / 2 + 150, windowHeight / 2);
-    aboutButton.mousePressed(this.showAbout.bind(this))
-    for (let key in this.styledict) {
-      aboutButton.style(key,this.styledict[key])
-    }
-    let removeEdges = createButton('Remove All Edges');
-    removeEdges.position(windowWidth / 2 + 250, windowHeight / 2);
-    removeEdges.mousePressed(this.removeAllEdges.bind(this))
-    for (let key in this.styledict) {
-      removeEdges.style(key,this.styledict[key])
-    }
+
+    let aboutButton = document.createElement('button');
+    aboutButton.textContent = "About"
+    aboutButton.style = "position: absolute;top:40px;"
+    document.getElementById("rightCol").appendChild(aboutButton)
+    aboutButton.onclick = this.showAbout.bind(this)
+
+    let removeEdges = document.createElement('button');
+    removeEdges.textContent = "Remove Edges"
+    removeEdges.style = "position: absolute;top:60px;"
+    document.getElementById("rightCol").appendChild(removeEdges)
+    removeEdges.onclick = this.removeAllEdges.bind(this)
+
     this.GUIarray.push(startButton)
     this.GUIarray.push(aboutButton)
     this.GUIarray.push(removeEdges)
@@ -212,7 +217,7 @@ class GUI {
     }
   }
   removeAllButtons() {
-    console.log("yes")
+    
     for (let btn of this.GUIarray) {
       btn.remove()
     }
