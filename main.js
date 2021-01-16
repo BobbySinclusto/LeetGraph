@@ -471,13 +471,31 @@ function mouseReleased() {
         if (corner != -1) {
           // Check to make sure this is input->output or vice versa
           if ((current_corner[0].is_input(current_corner[1]) && !boxes[i].is_input(corner)) || (!current_corner[0].is_input(current_corner[1]) && boxes[i].is_input(corner))) {
+            // Save the from_box in case the index changes when we remove an edge
+            from_box = boxes[i];
+
+            // Check that this corner doesn't already have a connection
+            for (connection in boxes[i].edgeConnections) {
+              if (corner == boxes[i].edgeConnections[connection][1]) {
+                // find the corner that this is connected to
+                other_corner = [boxes[i].edgeConnections[connection][0], boxes[i].edgeConnections[connection][2]];
+                // Disconnect this connection
+                boxes[i].edgeConnections.splice(connection, 1);
+                for (i in other_corner[0].edgeConnections) {
+                  if (other_corner[0].edgeConnections[i][1] == other_corner[1]) {
+                    other_corner[0].edgeConnections.splice(i, 1);
+                  }
+                }
+                break;
+              }
+            }
+
             // End the connection at this corner of this box
-            current_corner[0].edgeConnections.push([boxes[i], current_corner[1], corner]);
-            boxes[i].edgeConnections.push([current_corner[0], corner, current_corner[1]]);
+            current_corner[0].edgeConnections.push([from_box, current_corner[1], corner]);
+            from_box.edgeConnections.push([current_corner[0], corner, current_corner[1]]);
             current_corner = null;
             return;
           }
-          
         }
       }
     }
