@@ -44,6 +44,9 @@ class DraggableBox {
     this.inputs = inputs;
     this.outputs = outputs;
     this.text_size = 15;
+    fill(50, 150, 255);
+    this.inputs_color = [187, 134, 252];
+    this.outputs_color = [3, 218, 198];
   }
 
   set_text_color(color) {
@@ -84,10 +87,8 @@ class DraggableBox {
     rect(this.x, this.y, this.width, this.height, 10);
 
     //connectable components
-    // Color to draw the corners:
-    fill(50, 150, 255);
-
     // Add inputs:
+    fill(this.inputs_color[0], this.inputs_color[1], this.inputs_color[2]);
     // edge case where there's only one input
     if (this.inputs == 1) {
       ellipse(this.x, this.y + this.height / 2, this.width/4);
@@ -101,6 +102,7 @@ class DraggableBox {
     }
 
     // Add outputs:
+    fill(this.outputs_color[0], this.outputs_color[1], this.outputs_color[2]);
     if (this.outputs == 1) {
       ellipse(this.x + this.width, this.y + this.height / 2, this.width/4);
       this.corners[this.inputs] = [this.x + this.width, this.y + this.height / 2, this.width/4];
