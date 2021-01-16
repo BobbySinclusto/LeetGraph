@@ -347,8 +347,20 @@ function add_boxes_from_graph(adj) {
   // Shuffle array
   shuffleArray(boxes);
 
+  // Calculate total height
+  y_pos = 0;
+  x_pos = height / 16;
+  for (i in boxes) {
+    if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
+      y_pos += boxes[i].height + height / 16;
+      x_pos = height / 16;
+    }
+    x_pos += boxes[i].width + height / 16;
+  }
+  total_height = y_pos + boxes[boxes.length - 1].height;
+
   // Add boxes to play area in a nice grid type pattern thingy
-  y_pos = height / 16 + 230;
+  y_pos = height / 2 - total_height / 2;
   x_pos = height / 16;
   for (i in boxes) {
     if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
@@ -362,6 +374,16 @@ function add_boxes_from_graph(adj) {
       boxes[i].y = y_pos;
     }
     x_pos += boxes[i].width + height / 16;
+  }
+
+  // Failsafe, make sure that all the boxes are still on the screen
+  for (box of boxes) {
+    if (box.x + box.width > width) {
+      box.x = width - box.width;
+    }
+    if (box.y + box.height > height) {
+      box.y = height - box.height;
+    }
   }
 }
 
