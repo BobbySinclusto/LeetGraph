@@ -304,15 +304,44 @@ function preload(){
   song = loadSound('polish_cow.mp3');
 }
 
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+  }
+}
+
 function add_boxes_from_graph(adj) {
   // Loop through each node
   for (node in adj) {
     boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, adj[node][1].length));
   }
+
+  // Shuffle array
+  shuffleArray(boxes);
+
+  // Add boxes to play area in a nice grid type pattern thingy
+  y_pos = height / 16;
+  x_pos = y_pos;
+  for (i in boxes) {
+    if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
+      y_pos += boxes[i].height + height / 16;
+      x_pos = height / 16;
+      boxes[i].x = x_pos;
+      boxes[i].y = y_pos;
+    }
+    else {
+      boxes[i].x = x_pos;
+      boxes[i].y = y_pos;
+    }
+    x_pos += boxes[i].width + height / 16;
+  }
 }
 
 function setup() {
-  let canvasElm = createCanvas(windowWidth, windowHeight);
+  let canvasElm = createCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
   canvasElm.parent("canvasElm")
   levelSelector = new SelectorGUI()
   song.play()
@@ -339,8 +368,8 @@ function draw() {
   if (current_box != null) {
     // update box position
     // make sure our movement is within boundry
-    if (mouseX - current_offset[0] > 0 && mouseX - current_offset[0] + current_box.width < windowWidth ) {
-      if (mouseY - current_offset[1] > 0 && mouseY - current_offset[1] + current_box.height < windowHeight ) {
+    if (mouseX - current_offset[0] > 0 && mouseX - current_offset[0] + current_box.width < width ) {
+      if (mouseY - current_offset[1] > 0 && mouseY - current_offset[1] + current_box.height < height ) {
       
           current_box.x = mouseX - current_offset[0];
           current_box.y = mouseY - current_offset[1];
@@ -437,7 +466,16 @@ function mouseReleased() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
+  // Make sure that all the boxes are still on the screen
+  for (box of boxes) {
+    if (box.x + box.width > width) {
+      box.x = width - box.width;
+    }
+    if (box.y + box.height > height) {
+      box.y = height - box.height;
+    }
+  }
   clear();
   background(51);
 }
