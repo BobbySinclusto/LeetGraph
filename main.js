@@ -46,7 +46,7 @@ class DraggableBox {
     this.text_size = 15;
     this.inputs_color = [3, 218, 198];
     this.outputs_color = [187, 134, 252];
-    this.rotateFactor = 0;
+    this.rotateFactor = 3;
   }
 
   set_text_color(color) {
@@ -114,7 +114,7 @@ class DraggableBox {
     }
 
     // rotate box
-    if (this.rotateFactor > 0){
+    if (this.rotateFactor >= 0){
       for (let blank = 0; blank <= this.rotateFactor % 4; blank++ ){
         for (let corner_idx in this.corners) {
           let center = [this.x + this.corners[corner_idx][2]*2, this.y + this.corners[corner_idx][2]*2]
@@ -276,6 +276,7 @@ current_offset = null;
 current_corner = null;
 
 let levelSelector;
+let saved_mouse_position = null;
 
 function validatePuzzle(expectedResults){
   // compare adjaceny lits!
@@ -375,7 +376,6 @@ function add_boxes_from_graph(adj) {
   for (node in adj) {
     boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, adj[node][1].length));
   }
-  boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, 5));
   // Shuffle array
   shuffleArray(boxes);
 
@@ -479,6 +479,11 @@ function draw() {
     stroke(0);
     strokeWeight(1);
   }
+
+  // Check if mouse moved
+  if (saved_mouse_position != null && (saved_mouse_position[0] != mouseX || saved_mouse_position[1] != mouseY)) {
+    saved_mouse_position = null;
+  }
 }
 
 function mousePressed() {
@@ -509,8 +514,8 @@ function mousePressed() {
       if (boxes[i].is_inside(mouseX, mouseY)) {
         current_box = boxes[i];
         current_offset = [mouseX - boxes[i].x, mouseY - boxes[i].y];
-        
-        boxes[i].rotateFactor += 1
+        // Update saved mouse position
+        saved_mouse_position = [mouseX, mouseY];
         boxes[i].set_text_color([0,200,200]);
         break;
       }
@@ -558,6 +563,9 @@ function mouseReleased() {
     current_corner = null;
   }
   if (current_box != null) {
+    if (saved_mouse_position != null) {
+      current_box.rotateFactor += 1;
+    }
     current_box.set_text_color([200,220,220]);
     current_box = null;
     current_offset = null;
