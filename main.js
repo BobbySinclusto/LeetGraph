@@ -17,6 +17,7 @@ class DraggableBox {
     this.text_color = [200,220,220];
     this.inputs = inputs;
     this.outputs = outputs;
+    this.text_size = 15;
   }
 
   set_text_color(color) {
@@ -84,8 +85,29 @@ class DraggableBox {
     // Description text
     textAlign(CENTER, CENTER);
     fill(this.text_color[0],this.text_color[1],this.text_color[2]);
-    textSize(12);
-    text(this.description, this.x + this.width / 16, this.y + this.height / 16, this.width - this.width / 8, this.height - this.height / 8);
+    textSize(this.text_size);
+    // fix dumb hyphenated text wrapping for words
+    let lines_arr = [];
+    var current_line = "";
+    for (var word of this.description.split(' ')) {
+      let new_line = current_line == "" ? word : (current_line + " " + word);
+      if (textWidth(new_line) <= this.width - this.width/8) {
+        current_line = new_line;
+      }
+      else {
+        lines_arr.push(current_line);
+        current_line = word;
+      }
+    }
+    lines_arr.push(current_line);
+
+    let height_offset = 1.1 * this.text_size;
+    let total_height = height_offset * (lines_arr.length - 1) + this.text_size;
+    let container_top = this.y + this.height / 2 - total_height / 2;
+
+    for (i in lines_arr) {
+      text(lines_arr[i], this.x + this.width / 16, container_top + height_offset * i, this.width - this.width / 8, this.text_size);
+    }
 
     // Draw connections
     for (var connection of this.edgeConnections) {
