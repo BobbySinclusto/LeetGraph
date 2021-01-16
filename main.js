@@ -1,5 +1,31 @@
 let START_GAME_FLAG = 0
 
+//maintain levels of the game
+class GameLevels {
+
+  constructor(){
+    // gets level and an id assosiated with it
+    this.levelsText = {}
+    this.levels = {}
+  }
+  // add a level
+  addLevel(adj,id,txt){
+    this.levels[id] = adj
+    this.levelsText[id] = txt
+  }
+  // get a level by id
+  getLevelatId(id) {
+    return this.levels[id]
+  }
+  // a an array of ids 
+  getAllIds(){
+    return Object.keys(this.levels)
+  }
+
+
+
+}
+
 class DraggableBox {
   constructor(x, y, width, height, description, inputs = 2, outputs = 2) {
     this.edgeConnections = [];
@@ -26,6 +52,10 @@ class DraggableBox {
 
   is_inside(x, y) {
     return x <= this.x + this.width && y <= this.y + this.height && x >= this.x && y >= this.y;
+  }
+
+  is_input(corner) {
+    return corner < this.inputs;
   }
 
   remove_all_edge_connections(){
@@ -137,41 +167,50 @@ class GUI {
 
   addButtons() {
     this.GUIarray = []
-    let startButton = createButton('Start Game');
+    
+    let startButton = document.createElement('button');
+    startButton.textContent = "Start Game"
+    startButton.className = 'btn btn-primary'
+    startButton.style = "position: absolute;top:50px; left:200px"
+    startButton.onclick = this.startGame.bind(this)
+    document.getElementById("rightCol").appendChild(startButton)
+    
     this.styledict = {
       'color': "rgb(225, 227, 198)",
       'background-color':'transparent',
       'border-color':'antiquewhite',
       'padding':'1%'
     }
-    startButton.position(windowWidth / 2, windowHeight / 2);
-    startButton.mousePressed(this.startGame.bind(this))
     for (let key in this.styledict) {
-      startButton.style(key,this.styledict[key])
+      //startButton.style(key,this.styledict[key])
     }
-    let aboutButton = createButton('About');
-    aboutButton.position(windowWidth / 2 + 150, windowHeight / 2);
-    aboutButton.mousePressed(this.showAbout.bind(this))
-    for (let key in this.styledict) {
-      aboutButton.style(key,this.styledict[key])
-    }
-    let removeEdges = createButton('Remove All Edges');
-    removeEdges.position(windowWidth / 2 + 250, windowHeight / 2);
-    removeEdges.mousePressed(this.removeAllEdges.bind(this))
-    for (let key in this.styledict) {
-      removeEdges.style(key,this.styledict[key])
-    }
+
+    let aboutButton = document.createElement('button');
+    aboutButton.textContent = "About"
+    aboutButton.className = 'btn btn-primary'
+    aboutButton.style = "position: absolute;top:50px; left:350px"
+    document.getElementById("rightCol").appendChild(aboutButton)
+    aboutButton.onclick = this.showAbout.bind(this)
+
+    let removeEdges = document.createElement('button');
+    removeEdges.textContent = "Remove Edges"
+    removeEdges.className = 'btn btn-primary'
+    removeEdges.style = "position: absolute;top:50px; left:460px"
+    document.getElementById("rightCol").appendChild(removeEdges)
+    removeEdges.onclick = this.removeAllEdges.bind(this)
+
     this.GUIarray.push(startButton)
     this.GUIarray.push(aboutButton)
     this.GUIarray.push(removeEdges)
   }
 
   startGame(thi) {
-    console.log("bruh")
-    this.removeAllButtons()
-    clear()
-    START_GAME_FLAG = 1;
-    background(70);
+    validatePuzzle(level1);
+    // console.log("bruh")
+    // this.removeAllButtons()
+    // clear()
+    // START_GAME_FLAG = 1;
+    // background(70);
   }
 
   showAbout(thi) {
@@ -189,7 +228,7 @@ class GUI {
     }
   }
   removeAllButtons() {
-    console.log("yes")
+    
     for (let btn of this.GUIarray) {
       btn.remove()
     }
@@ -206,39 +245,163 @@ current_corner = null;
 
 let levelSelector;
 
-
-function mySelectEvent() {
-  let item = levelSelector.value();
-  background(200);
-  text('It is a ' + item + '!', 50, 50);
+function validatePuzzle(expectedResults){
+  // compare adjaceny lits!
+  // Go through each node in the expected list
+  for (node in expectedResults) {
+    // Find box that matches this description
+    let current_box = null;
+    for (box of boxes) {
+      if (box.description == node) {
+        current_box = box;
+        break;
+      }
+    }
+    // Check whether the connections from this box match the solution's adjacency list
+    // Check output connections
+    for (connection of expectedResults[node][1]) {
+      // Make sure that each output connection is connected from this box
+      key_is_in_box_connections = false;
+      for (box_conn of current_box.edgeConnections) {
+        // Only check output nodes
+        if (!current_box.is_input(box_conn) && box_conn[0].description == connection) {
+          // There is a connection that matches
+          key_is_in_box_connections = true;
+          break;
+        }
+      }
+      if (!key_is_in_box_connections) {
+        // If nothing matches return false
+        print("not valid");
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
-function selectLevel(){
-  textAlign(CENTER);
-  levelSelector = createSelect();
-  levelSelector.position(10, 10);
-  levelSelector.option('1');
-  levelSelector.option('2');
-  levelSelector.option('3');
-  levelSelector.selected('1');
-  levelSelector.changed(mySelectEvent);
+class SelectorGUI {
+
+  constructor(){
+    // create an instance of all levels
+    this.levelCollection = new GameLevels();
+    
+    for (let i in all_levels) {
+      this.levelCollection.addLevel(all_levels[i][0] , i , all_levels[i][1])
+    }
+    let linkText = ""
+    for (let i in this.levelCollection.levels){
+      linkText += `<li><a id="${i}" class="dropdown-item" href="#" >${i}</a></li>\n`
+    }
+    this.currentLevel = "Problem 1"
+    let selectElm = document.createElement('div');
+    selectElm.className = `dropdown`
+    selectElm.innerHTML = ` <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+    Problems
+  </button>
+  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+    ${linkText}
+  </ul>`
+
+    selectElm.style = "position: absolute;top:50px; left:52px"
+
+    document.getElementById("rightCol").appendChild(selectElm)
+
+    for (let i in this.levelCollection.levels){
+      document.getElementById(i).onclick = this.changeLevel(i).bind(this)
+    }
+  }
+
+  // changes a given level!
+  changeLevel(levelID) {
+    return function ()  {
+      console.log("time to change level!",levelID)
+      this.currentLevel = levelID
+      document.getElementById("problemH1").innerText = this.currentLevel
+      document.getElementById("problemText").innerText = this.levelCollection.levelsText[levelID]
+      // change problem text and current level!
+    }
+
+  }
 }
 
 function preload(){
   song = loadSound('polish_cow.mp3');
 }
 
+function shuffleArray(array) {
+  for (var i = array.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var temp = array[i];
+      array[i] = array[j];
+      array[j] = temp;
+  }
+}
+
+function add_boxes_from_graph(adj) {
+  // Loop through each node
+  for (node in adj) {
+    boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, adj[node][1].length));
+  }
+
+  // Shuffle array
+  shuffleArray(boxes);
+
+  // Calculate total height
+  y_pos = 0;
+  x_pos = height / 16;
+  for (i in boxes) {
+    if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
+      y_pos += boxes[i].height + height / 16;
+      x_pos = height / 16;
+    }
+    x_pos += boxes[i].width + height / 16;
+  }
+  total_height = y_pos + boxes[boxes.length - 1].height;
+
+  // Add boxes to play area in a nice grid type pattern thingy
+  y_pos = height / 2 - total_height / 2;
+  x_pos = height / 16;
+  for (i in boxes) {
+    if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
+      y_pos += boxes[i].height + height / 16;
+      x_pos = height / 16;
+      boxes[i].x = x_pos;
+      boxes[i].y = y_pos;
+    }
+    else {
+      boxes[i].x = x_pos;
+      boxes[i].y = y_pos;
+    }
+    x_pos += boxes[i].width + height / 16;
+  }
+
+  // Failsafe, make sure that all the boxes are still on the screen
+  for (box of boxes) {
+    if (box.x + box.width > width) {
+      box.x = width - box.width;
+    }
+    if (box.y + box.height > height) {
+      box.y = height - box.height;
+    }
+  }
+}
+
 function setup() {
-  let canvasElm = createCanvas(windowWidth, windowHeight);
+  let canvasElm = createCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
   canvasElm.parent("canvasElm")
-  selectLevel()
+  levelSelector = new SelectorGUI()
   song.play()
   mainGUI = new GUI()
 
   background(0);
-  boxes.push(new DraggableBox(200, 200, 100, 100, "Output", 1, 3));
-  boxes.push(new DraggableBox(200, 200, 100, 100, "Sort one half", 4, 1));
-  boxes.push(new DraggableBox(200, 200, 100, 100, "Sort the other half", 2, 2));
+  // boxes.push(new DraggableBox(200, 200, 100, 100, "Output", 1, 3));
+  // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort one half", 4, 1));
+  // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort the other half", 2, 2));
+
+  // Temporary debugging
+  add_boxes_from_graph(level1);
+  
 }
 
 
@@ -252,8 +415,8 @@ function draw() {
   if (current_box != null) {
     // update box position
     // make sure our movement is within boundry
-    if (mouseX - current_offset[0] > 0 && mouseX - current_offset[0] + current_box.width < windowWidth ) {
-      if (mouseY - current_offset[1] > 0 && mouseY - current_offset[1] + current_box.height < windowHeight ) {
+    if (mouseX - current_offset[0] > 0 && mouseX - current_offset[0] + current_box.width < width ) {
+      if (mouseY - current_offset[1] > 0 && mouseY - current_offset[1] + current_box.height < height ) {
       
           current_box.x = mouseX - current_offset[0];
           current_box.y = mouseY - current_offset[1];
@@ -284,9 +447,6 @@ function draw() {
     stroke(0);
     strokeWeight(1);
   }
-
-
-  //ellipse(mouseX, mouseY, 40, 40);
 }
 
 function mousePressed() {
@@ -322,7 +482,6 @@ function mousePressed() {
       }
     }
   }
-  //boxes.push(new DraggableBox(mouseX, mouseY, 80, 80, "test", [255,255,255]));
 }
 
 function mouseReleased() {
@@ -332,11 +491,33 @@ function mouseReleased() {
         // check corners
         let corner = boxes[i].check_corners();
         if (corner != -1) {
-          // End the connection at this corner of this box
-          current_corner[0].edgeConnections.push([boxes[i], current_corner[1], corner]);
-          boxes[i].edgeConnections.push([current_corner[0], corner, current_corner[1]]);
-          current_corner = null;
-          return;
+          // Check to make sure this is input->output or vice versa
+          if ((current_corner[0].is_input(current_corner[1]) && !boxes[i].is_input(corner)) || (!current_corner[0].is_input(current_corner[1]) && boxes[i].is_input(corner))) {
+            // Save the from_box in case the index changes when we remove an edge
+            from_box = boxes[i];
+
+            // Check that this corner doesn't already have a connection
+            for (connection in boxes[i].edgeConnections) {
+              if (corner == boxes[i].edgeConnections[connection][1]) {
+                // find the corner that this is connected to
+                other_corner = [boxes[i].edgeConnections[connection][0], boxes[i].edgeConnections[connection][2]];
+                // Disconnect this connection
+                boxes[i].edgeConnections.splice(connection, 1);
+                for (i in other_corner[0].edgeConnections) {
+                  if (other_corner[0].edgeConnections[i][1] == other_corner[1]) {
+                    other_corner[0].edgeConnections.splice(i, 1);
+                  }
+                }
+                break;
+              }
+            }
+
+            // End the connection at this corner of this box
+            current_corner[0].edgeConnections.push([from_box, current_corner[1], corner]);
+            from_box.edgeConnections.push([current_corner[0], corner, current_corner[1]]);
+            current_corner = null;
+            return;
+          }
         }
       }
     }
@@ -350,7 +531,16 @@ function mouseReleased() {
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+  resizeCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
+  // Make sure that all the boxes are still on the screen
+  for (box of boxes) {
+    if (box.x + box.width > width) {
+      box.x = width - box.width;
+    }
+    if (box.y + box.height > height) {
+      box.y = height - box.height;
+    }
+  }
   clear();
   background(51);
 }
