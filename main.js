@@ -199,11 +199,12 @@ class GUI {
   }
 
   startGame(thi) {
-    console.log("bruh")
-    this.removeAllButtons()
-    clear()
-    START_GAME_FLAG = 1;
-    background(70);
+    validatePuzzle(level1);
+    // console.log("bruh")
+    // this.removeAllButtons()
+    // clear()
+    // START_GAME_FLAG = 1;
+    // background(70);
   }
 
   showAbout(thi) {
@@ -239,17 +240,38 @@ current_corner = null;
 let levelSelector;
 
 function validatePuzzle(expectedResults){
-
-    // compare adjaceny lits!
-    // TODO: build adj list of boxes
-    for (let res in expectedResults){
-      for (let val of expectedResults[res]){
-        if (not (val in adj[res])){
-          return False
-        }
-      } 
+  // compare adjaceny lits!
+  // Go through each node in the expected list
+  for (node in expectedResults) {
+    // Find box that matches this description
+    let current_box = null;
+    for (box of boxes) {
+      if (box.description == node) {
+        current_box = box;
+        break;
+      }
     }
-    return True
+    // Check whether the connections from this box match the solution's adjacency list
+    // Check output connections
+    for (connection of expectedResults[node][1]) {
+      // Make sure that each output connection is connected from this box
+      key_is_in_box_connections = false;
+      for (box_conn of current_box.edgeConnections) {
+        // Only check output nodes
+        if (!current_box.is_input(box_conn) && box_conn[0].description == connection) {
+          // There is a connection that matches
+          key_is_in_box_connections = true;
+          break;
+        }
+      }
+      if (!key_is_in_box_connections) {
+        // If nothing matches return false
+        print("not valid");
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 function mySelectEvent() {
