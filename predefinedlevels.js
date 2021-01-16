@@ -10,3 +10,8 @@ level1 =
     "Output":[["Merge sorted lists"],[]]
   };
 
+
+all_levels = {
+    "Problem 1" : [level1 , "Problem text"]
+}
+

@@ -3,13 +3,15 @@ let START_GAME_FLAG = 0
 //maintain levels of the game
 class GameLevels {
 
-  constructor(adj,id){
+  constructor(){
     // gets level and an id assosiated with it
-    this.levels = {id:adj}
+    this.levelsText = {}
+    this.levels = {}
   }
   // add a level
-  addLevel(adj,id){
+  addLevel(adj,id,txt){
     this.levels[id] = adj
+    this.levelsText[id] = txt
   }
   // get a level by id
   getLevelatId(id) {
@@ -19,6 +21,7 @@ class GameLevels {
   getAllIds(){
     return Object.keys(this.levels)
   }
+
 
 
 }
@@ -167,7 +170,8 @@ class GUI {
     
     let startButton = document.createElement('button');
     startButton.textContent = "Start Game"
-    startButton.style = "position: absolute;top:20px;"
+    startButton.className = 'btn btn-primary'
+    startButton.style = "position: absolute;top:50px; left:200px"
     startButton.onclick = this.startGame.bind(this)
     document.getElementById("rightCol").appendChild(startButton)
     
@@ -183,13 +187,15 @@ class GUI {
 
     let aboutButton = document.createElement('button');
     aboutButton.textContent = "About"
-    aboutButton.style = "position: absolute;top:40px;"
+    aboutButton.className = 'btn btn-primary'
+    aboutButton.style = "position: absolute;top:50px; left:350px"
     document.getElementById("rightCol").appendChild(aboutButton)
     aboutButton.onclick = this.showAbout.bind(this)
 
     let removeEdges = document.createElement('button');
     removeEdges.textContent = "Remove Edges"
-    removeEdges.style = "position: absolute;top:60px;"
+    removeEdges.className = 'btn btn-primary'
+    removeEdges.style = "position: absolute;top:50px; left:460px"
     document.getElementById("rightCol").appendChild(removeEdges)
     removeEdges.onclick = this.removeAllEdges.bind(this)
 
@@ -274,21 +280,49 @@ function validatePuzzle(expectedResults){
   return true;
 }
 
-function mySelectEvent() {
-  let item = levelSelector.value();
-  background(200);
-  text('It is a ' + item + '!', 50, 50);
-}
+class SelectorGUI {
 
-function selectLevel(){
-  textAlign(CENTER);
-  levelSelector = createSelect();
-  levelSelector.position(10, 10);
-  levelSelector.option('1');
-  levelSelector.option('2');
-  levelSelector.option('3');
-  levelSelector.selected('1');
-  levelSelector.changed(mySelectEvent);
+  constructor(){
+    // create an instance of all levels
+    this.levelCollection = new GameLevels();
+    
+    for (let i in all_levels) {
+      this.levelCollection.addLevel(all_levels[i][0] , i , all_levels[i][1])
+    }
+    let linkText = ""
+    for (let i in this.levelCollection.levels){
+      linkText += `<li><a id="${i}" class="dropdown-item" href="#" >${i}</a></li>\n`
+    }
+    this.currentLevel = "Problem 1"
+    let selectElm = document.createElement('div');
+    selectElm.className = `dropdown`
+    selectElm.innerHTML = ` <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+    Problems
+  </button>
+  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
+    ${linkText}
+  </ul>`
+
+    selectElm.style = "position: absolute;top:50px; left:52px"
+
+    document.getElementById("rightCol").appendChild(selectElm)
+
+    for (let i in this.levelCollection.levels){
+      document.getElementById(i).onclick = this.changeLevel(i).bind(this)
+    }
+  }
+
+  // changes a given level!
+  changeLevel(levelID) {
+    return function ()  {
+      console.log("time to change level!",levelID)
+      this.currentLevel = levelID
+      document.getElementById("problemH1").innerText = this.currentLevel
+      document.getElementById("problemText").innerText = this.levelCollection.levelsText[levelID]
+      // change problem text and current level!
+    }
+
+  }
 }
 
 function preload(){
@@ -314,8 +348,8 @@ function add_boxes_from_graph(adj) {
   shuffleArray(boxes);
 
   // Add boxes to play area in a nice grid type pattern thingy
-  y_pos = height / 16;
-  x_pos = y_pos;
+  y_pos = height / 16 + 230;
+  x_pos = height / 16;
   for (i in boxes) {
     if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
       y_pos += boxes[i].height + height / 16;
@@ -334,7 +368,7 @@ function add_boxes_from_graph(adj) {
 function setup() {
   let canvasElm = createCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
   canvasElm.parent("canvasElm")
-  selectLevel()
+  levelSelector = new SelectorGUI()
   song.play()
   mainGUI = new GUI()
 
