@@ -178,10 +178,11 @@ function preload(){
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
-  selectLevel()
+  let canvasElm = createCanvas(windowWidth, windowHeight);
+  canvasElm.parent("canvasElm")
+  //selectLevel()
   song.play()
-  mainGUI = new GUI()
+  //mainGUI = new GUI()
 
   background(0);
   boxes.push(new DraggableBox(200, 200, 80, 80, "Output", [255,255,255]));
