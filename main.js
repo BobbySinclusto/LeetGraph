@@ -45,6 +45,9 @@ class DraggableBox {
     this.outputs = outputs;
     this.text_size = 15;
     this.rotateFactor = 0;
+    fill(50, 150, 255);
+    this.inputs_color = [187, 134, 252];
+    this.outputs_color = [3, 218, 198];
   }
 
   set_text_color(color) {
@@ -85,10 +88,8 @@ class DraggableBox {
     rect(this.x, this.y, this.width, this.height, 10);
 
     //connectable components
-    // Color to draw the corners:
-    fill(50, 150, 255);
-
     // Add inputs:
+    fill(this.inputs_color[0], this.inputs_color[1], this.inputs_color[2]);
     // edge case where there's only one input
     if (this.inputs == 1) {
       
@@ -102,6 +103,7 @@ class DraggableBox {
     }
 
     // Add outputs:
+    fill(this.outputs_color[0], this.outputs_color[1], this.outputs_color[2]);
     if (this.outputs == 1) {
      
       this.corners[this.inputs] = [this.x + this.width, this.y + this.height / 2, this.width/4];
@@ -143,12 +145,14 @@ class DraggableBox {
     textAlign(CENTER, CENTER);
     fill(this.text_color[0],this.text_color[1],this.text_color[2]);
     textSize(this.text_size);
+
+    let margin = this.width / 8;
     // fix dumb hyphenated text wrapping for words
     let lines_arr = [];
     var current_line = "";
     for (var word of this.description.split(' ')) {
       let new_line = current_line == "" ? word : (current_line + " " + word);
-      if (textWidth(new_line) <= this.width - this.width/8) {
+      if (textWidth(new_line) <= this.width - margin * 2) {
         current_line = new_line;
       }
       else {
@@ -163,7 +167,7 @@ class DraggableBox {
     let container_top = this.y + this.height / 2 - total_height / 2;
 
     for (i in lines_arr) {
-      text(lines_arr[i], this.x + this.width / 16, container_top + height_offset * i, this.width - this.width / 8, this.text_size);
+      text(lines_arr[i], this.x + margin, container_top + height_offset * i, this.width - margin * 2, this.text_size);
     }
 
     // Draw connections
@@ -232,11 +236,12 @@ class GUI {
   }
 
   startGame(thi) {
-    console.log("bruh")
-    this.removeAllButtons()
-    clear()
-    START_GAME_FLAG = 1;
-    background(70);
+    validatePuzzle(level1);
+    // console.log("bruh")
+    // this.removeAllButtons()
+    // clear()
+    // START_GAME_FLAG = 1;
+    // background(70);
   }
 
   showAbout(thi) {
@@ -272,17 +277,38 @@ current_corner = null;
 let levelSelector;
 
 function validatePuzzle(expectedResults){
-
-    // compare adjaceny lits!
-    // TODO: build adj list of boxes
-    for (let res in expectedResults){
-      for (let val of expectedResults[res]){
-        if (not (val in adj[res])){
-          return False
-        }
-      } 
+  // compare adjaceny lits!
+  // Go through each node in the expected list
+  for (node in expectedResults) {
+    // Find box that matches this description
+    let current_box = null;
+    for (box of boxes) {
+      if (box.description == node) {
+        current_box = box;
+        break;
+      }
     }
-    return True
+    // Check whether the connections from this box match the solution's adjacency list
+    // Check output connections
+    for (connection of expectedResults[node][1]) {
+      // Make sure that each output connection is connected from this box
+      key_is_in_box_connections = false;
+      for (box_conn of current_box.edgeConnections) {
+        // Only check output nodes
+        if (!current_box.is_input(box_conn) && box_conn[0].description == connection) {
+          // There is a connection that matches
+          key_is_in_box_connections = true;
+          break;
+        }
+      }
+      if (!key_is_in_box_connections) {
+        // If nothing matches return false
+        print("not valid");
+        return false;
+      }
+    }
+  }
+  return true;
 }
 
 class SelectorGUI {
@@ -352,8 +378,20 @@ function add_boxes_from_graph(adj) {
   // Shuffle array
   shuffleArray(boxes);
 
+  // Calculate total height
+  y_pos = 0;
+  x_pos = height / 16;
+  for (i in boxes) {
+    if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
+      y_pos += boxes[i].height + height / 16;
+      x_pos = height / 16;
+    }
+    x_pos += boxes[i].width + height / 16;
+  }
+  total_height = y_pos + boxes[boxes.length - 1].height;
+
   // Add boxes to play area in a nice grid type pattern thingy
-  y_pos = height / 16 + 230;
+  y_pos = height / 2 - total_height / 2;
   x_pos = height / 16;
   for (i in boxes) {
     if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
@@ -367,6 +405,16 @@ function add_boxes_from_graph(adj) {
       boxes[i].y = y_pos;
     }
     x_pos += boxes[i].width + height / 16;
+  }
+
+  // Failsafe, make sure that all the boxes are still on the screen
+  for (box of boxes) {
+    if (box.x + box.width > width) {
+      box.x = width - box.width;
+    }
+    if (box.y + box.height > height) {
+      box.y = height - box.height;
+    }
   }
 }
 
@@ -478,13 +526,31 @@ function mouseReleased() {
         if (corner != -1) {
           // Check to make sure this is input->output or vice versa
           if ((current_corner[0].is_input(current_corner[1]) && !boxes[i].is_input(corner)) || (!current_corner[0].is_input(current_corner[1]) && boxes[i].is_input(corner))) {
+            // Save the from_box in case the index changes when we remove an edge
+            from_box = boxes[i];
+
+            // Check that this corner doesn't already have a connection
+            for (connection in boxes[i].edgeConnections) {
+              if (corner == boxes[i].edgeConnections[connection][1]) {
+                // find the corner that this is connected to
+                other_corner = [boxes[i].edgeConnections[connection][0], boxes[i].edgeConnections[connection][2]];
+                // Disconnect this connection
+                boxes[i].edgeConnections.splice(connection, 1);
+                for (i in other_corner[0].edgeConnections) {
+                  if (other_corner[0].edgeConnections[i][1] == other_corner[1]) {
+                    other_corner[0].edgeConnections.splice(i, 1);
+                  }
+                }
+                break;
+              }
+            }
+
             // End the connection at this corner of this box
-            current_corner[0].edgeConnections.push([boxes[i], current_corner[1], corner]);
-            boxes[i].edgeConnections.push([current_corner[0], corner, current_corner[1]]);
+            current_corner[0].edgeConnections.push([from_box, current_corner[1], corner]);
+            from_box.edgeConnections.push([current_corner[0], corner, current_corner[1]]);
             current_corner = null;
             return;
           }
-          
         }
       }
     }
