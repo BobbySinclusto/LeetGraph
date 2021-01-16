@@ -26,6 +26,10 @@ class DraggableBox {
     return x <= this.x + this.width && y <= this.y + this.height && x >= this.x && y >= this.y;
   }
 
+  remove_all_edge_connections(){
+    this.edgeConnections = []
+  }
+   
   check_corners() {
     // Check which corner the mouse is clicking, or if it's clicking in the middle somewhere
     // First check the corners
@@ -100,8 +104,15 @@ class GUI {
     for (let key in this.styledict) {
       aboutButton.style(key,this.styledict[key])
     }
+    let removeEdges = createButton('Remove All Edges');
+    removeEdges.position(windowWidth / 2 + 250, windowHeight / 2);
+    removeEdges.mousePressed(this.removeAllEdges.bind(this))
+    for (let key in this.styledict) {
+      removeEdges.style(key,this.styledict[key])
+    }
     this.GUIarray.push(startButton)
     this.GUIarray.push(aboutButton)
+    this.GUIarray.push(removeEdges)
   }
 
   startGame(thi) {
@@ -119,6 +130,13 @@ class GUI {
     background(70);
   }
 
+  removeAllEdges(){
+    if (boxes){
+      for (let box of boxes){
+        box.remove_all_edge_connections()
+      }
+    }
+  }
   removeAllButtons() {
     console.log("yes")
     for (let btn of this.GUIarray) {
