@@ -206,6 +206,19 @@ current_corner = null;
 
 let levelSelector;
 
+function validatePuzzle(expectedResults){
+
+    // compare adjaceny lits!
+    // TODO: build adj list of boxes
+    for (let res in expectedResults){
+      for (let val of expectedResults[res]){
+        if (not (val in adj[res])){
+          return False
+        }
+      } 
+    }
+    return True
+}
 
 function mySelectEvent() {
   let item = levelSelector.value();
