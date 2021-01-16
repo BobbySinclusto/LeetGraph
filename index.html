@@ -1,33 +1,10 @@
-<!DOCTYPE html>
 <html>
-<head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.2.0/p5.min.js" integrity="sha512-b/htz6gIyFi3dwSoZ0Uv3cuv3Ony7EeKkacgrcVg8CMzu90n777qveu0PBcbZUA7TzyENGtU+qZRuFAkfqgyoQ==" crossorigin="anonymous"></script>
-</head>
-<body>
-
-</body>
-
-<script>
-function setup() {
-  createCanvas(720, 560);
-  noStroke();
-  noLoop();
-}
-
-function draw() {
-  drawCircle(width / 2, 280, 6);
-}
-
-function drawCircle(x, radius, level) {
-  const tt = (126 * level) / 4.0;
-  fill(tt);
-  ellipse(x, height / 2, radius * 2, radius * 2);
-  if (level > 1) {
-    level = level - 1;
-    drawCircle(x - radius / 2, radius / 2, level);
-    drawCircle(x + radius / 2, radius / 2, level);
-  }
-}
-</script>
-
+  <head>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.2.0/lib/p5.js"></script>
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <main>
+    </main>
+  </body>
 </html>
