@@ -1,14 +1,15 @@
 function setup() {
-  
   createCanvas(windowWidth, windowHeight);
   background(51);
 }
 
 function draw() {
+  // Draw a box
   if (mouseIsPressed) {
     clear();
     background(51);
-  } 
+  }
+
   ellipse(mouseX, mouseY, 40, 40);
 }
 
