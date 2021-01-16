@@ -3,10 +3,10 @@ let START_GAME_FLAG = 0
 //maintain levels of the game
 class GameLevels {
 
-  constructor(adj,id,txt){
+  constructor(){
     // gets level and an id assosiated with it
-    this.levelsText = {id:txt}
-    this.levels = {id:adj}
+    this.levelsText = {}
+    this.levels = {}
   }
   // add a level
   addLevel(adj,id,txt){
@@ -258,22 +258,44 @@ function validatePuzzle(expectedResults){
 class SelectorGUI {
 
   constructor(){
-    let levelCollection = new GameLevels();
-   
+    // create an instance of all levels
+    this.levelCollection = new GameLevels();
+    
+    for (let i in all_levels) {
+      this.levelCollection.addLevel(all_levels[i][0] , i , all_levels[i][1])
+    }
+    let linkText = ""
+    for (let i in this.levelCollection.levels){
+      linkText += `<li><a id="${i}" class="dropdown-item" href="#" >${i}</a></li>\n`
+    }
+    this.currentLevel = "Problem 1"
     let selectElm = document.createElement('div');
     selectElm.className = `dropdown`
     selectElm.innerHTML = ` <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
     Dropdown button
   </button>
   <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <li><a class="dropdown-item" href="#">Action</a></li>
-    <li><a class="dropdown-item" href="#">Another action</a></li>
-    <li><a class="dropdown-item" href="#">Something else here</a></li>
+    ${linkText}
   </ul>`
 
     selectElm.style = "position: absolute;top:20px;"
 
     document.getElementById("yesover").appendChild(selectElm)
+
+    for (let i in this.levelCollection.levels){
+      document.getElementById(i).onclick = this.changeLevel(i).bind(this)
+    }
+  }
+
+  // changes a given level!
+  changeLevel(levelID) {
+    return function ()  {
+      console.log("time to change level!",levelID)
+      this.currentLevel = levelID
+      document.getElementById("problemH1").innerText = this.currentLevel
+      document.getElementById("problemText").innerText = this.levelCollection.levelsText[levelID]
+      // change problem text and current level!
+    }
 
   }
 }
