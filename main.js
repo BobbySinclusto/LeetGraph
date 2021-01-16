@@ -1,6 +1,6 @@
 function setup() {
   
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(windowWidth, windowHeight,renderer=WEBGL);
   background(51);
 }
 
@@ -8,8 +8,9 @@ function draw() {
   if (mouseIsPressed) {
     clear();
     background(51);
-  } 
-  ellipse(mouseX, mouseY, 40, 40);
+  }
+
+  box(50);
 }
 
 function windowResized() { 
