@@ -50,22 +50,23 @@ class GUI {
   addButtons() {
     this.GUIarray = []
     let startButton = createButton('Start Game');
-
+    this.styledict = {
+      'color': "rgb(225, 227, 198)",
+      'background-color':'transparent',
+      'border-color':'antiquewhite',
+      'padding':'1%'
+    }
     startButton.position(windowWidth / 2, windowHeight / 2);
     startButton.mousePressed(this.startGame.bind(this))
-    startButton.style('color',"rgb(225, 227, 198)")
-    startButton.style('background-color','transparent')
-    startButton.style('border-color','antiquewhite')
-    startButton.style('padding','1%')
+    for (let key in this.styledict) {
+      startButton.style(key,this.styledict[key])
+    }
     let aboutButton = createButton('About');
-
     aboutButton.position(windowWidth / 2 + 150, windowHeight / 2);
-    
     aboutButton.mousePressed(this.showAbout.bind(this))
-    aboutButton.style('color',"rgb(225, 227, 198)")
-    aboutButton.style('background-color','transparent')
-    aboutButton.style('border-color','antiquewhite')
-    aboutButton.style('padding','1%')
+    for (let key in this.styledict) {
+      aboutButton.style(key,this.styledict[key])
+    }
     this.GUIarray.push(startButton)
     this.GUIarray.push(aboutButton)
   }
@@ -100,13 +101,33 @@ let song;
 current_box = null;
 current_offset = null;
 
+let levelSelector;
+
+
+function mySelectEvent() {
+  let item = levelSelector.value();
+  background(200);
+  text('It is a ' + item + '!', 50, 50);
+}
+
+function selectLevel(){
+  textAlign(CENTER);
+  levelSelector = createSelect();
+  levelSelector.position(10, 10);
+  levelSelector.option('1');
+  levelSelector.option('2');
+  levelSelector.option('3');
+  levelSelector.selected('1');
+  levelSelector.changed(mySelectEvent);
+}
+
 function preload(){
   song = loadSound('polish_cow.mp3');
 }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-
+  selectLevel()
   song.play()
   mainGUI = new GUI()
 
