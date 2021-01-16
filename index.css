@@ -15,8 +15,11 @@ body, html {
   }
 
 #yesover {
-    color:antiquewhite;
     overflow-y: scroll; 
+    color:rgb(233, 233, 233);
+    font-family: sans-serif;
+    font-size: x-large;
+    line-height: 200%;
 }
 
 html, div {
@@ -28,4 +31,10 @@ canvas {
     height: 100%;
     display: block;
     overflow: hidden;
+}
+h1 {
+    color:rgb(233, 233, 233);
+    font-family: sans-serif;
+    font-size: x-large;
+    line-height: 200%;
 }
