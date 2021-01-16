@@ -51,6 +51,10 @@ class DraggableBox {
     return x <= this.x + this.width && y <= this.y + this.height && x >= this.x && y >= this.y;
   }
 
+  is_input(corner) {
+    return corner < this.inputs;
+  }
+
   remove_all_edge_connections(){
     this.edgeConnections = []
   }
@@ -325,9 +329,6 @@ function draw() {
     stroke(0);
     strokeWeight(1);
   }
-
-
-  //ellipse(mouseX, mouseY, 40, 40);
 }
 
 function mousePressed() {
@@ -363,7 +364,6 @@ function mousePressed() {
       }
     }
   }
-  //boxes.push(new DraggableBox(mouseX, mouseY, 80, 80, "test", [255,255,255]));
 }
 
 function mouseReleased() {
@@ -373,11 +373,15 @@ function mouseReleased() {
         // check corners
         let corner = boxes[i].check_corners();
         if (corner != -1) {
-          // End the connection at this corner of this box
-          current_corner[0].edgeConnections.push([boxes[i], current_corner[1], corner]);
-          boxes[i].edgeConnections.push([current_corner[0], corner, current_corner[1]]);
-          current_corner = null;
-          return;
+          // Check to make sure this is input->output or vice versa
+          if ((current_corner[0].is_input(current_corner[1]) && !boxes[i].is_input(corner)) || (!current_corner[0].is_input(current_corner[1]) && boxes[i].is_input(corner))) {
+            // End the connection at this corner of this box
+            current_corner[0].edgeConnections.push([boxes[i], current_corner[1], corner]);
+            boxes[i].edgeConnections.push([current_corner[0], corner, current_corner[1]]);
+            current_corner = null;
+            return;
+          }
+          
         }
       }
     }
