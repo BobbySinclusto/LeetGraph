@@ -2,7 +2,8 @@ let START_GAME_FLAG = 0
 
 class DraggableBox {
   constructor(x, y, width, height, description, color) {
-    this.edgeConnections = []
+    this.edgeConnections = [];
+    this.corners = [null, null, null, null];
     this.x = x;
     this.y = y;
     this.height = height;
@@ -25,17 +26,52 @@ class DraggableBox {
     return x <= this.x + this.width && y <= this.y + this.height && x >= this.x && y >= this.y;
   }
 
+  check_corners() {
+    // Check which corner the mouse is clicking, or if it's clicking in the middle somewhere
+    // First check the corners
+    for (var corner in this.corners) {
+      if ((mouseX - this.corners[corner][0])**2 + (mouseY - this.corners[corner][1])**2 <= (this.corners[corner][2] / 2)**2) {
+        return corner;
+      }
+    }
+    // Didn't find a corner
+    return -1;
+  }
+
+  get_corner_location(corner) {
+    return [this.corners[corner][0], this.corners[corner][1]];
+  }
+
   draw() {
+    // Draw boxes
     fill(this.color[0],this.color[1],this.color[2]);
     rect(this.x, this.y, this.width, this.height, 10);
+
     //connectable components
-    ellipse(this.x, this.y, this.width/4)
-    ellipse(this.x+this.width, this.y, this.width/4)
-    ellipse(this.x+this.width, this.y+this.height, this.width/4)
-    ellipse(this.x, this.y+this.height, this.width/4)
+    ellipse(this.x, this.y, this.width/4);
+    ellipse(this.x+this.width, this.y, this.width/4);
+    ellipse(this.x+this.width, this.y+this.height, this.width/4);
+    ellipse(this.x, this.y+this.height, this.width/4);
+    this.corners[0] = [this.x, this.y, this.width/4];
+    this.corners[1] = [this.x+this.width, this.y, this.width/4];
+    this.corners[2] = [this.x+this.width, this.y+this.height, this.width/4];
+    this.corners[3] = [this.x, this.y+this.height, this.width/4];
+
+    // Description text
     textAlign(CENTER, CENTER);
     fill(this.text_color[0],this.text_color[1],this.text_color[2]);
     text(this.description, this.x, this.y, this.width, this.height);
+
+    // Draw connections
+    for (var connection of this.edgeConnections) {
+      stroke(50, 50, 255);
+      strokeWeight(10);
+      let fromLoc = this.get_corner_location(connection[1]);
+      let toLoc = connection[0].get_corner_location(connection[2]);
+      line(fromLoc[0], fromLoc[1], toLoc[0], toLoc[1]);
+      stroke(0);
+      strokeWeight(1);
+    }
   }
 }
 
@@ -86,6 +122,7 @@ let boxes = [];
 let song;
 current_box = null;
 current_offset = null;
+current_corner = null;
 
 function preload(){
   song = loadSound('polish_cow.mp3');
@@ -98,8 +135,9 @@ function setup() {
   mainGUI = new GUI()
 
   background(0);
-  boxes.push(new DraggableBox(200, 200, 80, 80, "test", [255,255,255]));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "test", [255,255,255]));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Bob", [255,255,255]));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Joey", [255,255,255]));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "asdf", [255,0,255]));
 }
 
 
@@ -120,6 +158,17 @@ function draw() {
     thing.draw();
   }
 
+  // Draw current connection if there is one
+  if (current_corner != null) {
+    // Start at whichever corner is selected
+    stroke(50, 50, 255);
+    strokeWeight(10);
+    loc = current_corner[0].get_corner_location(current_corner[1]);
+    line(loc[0],loc[1], mouseX, mouseY);
+    stroke(0);
+    strokeWeight(1);
+  }
+
 
   //ellipse(mouseX, mouseY, 40, 40);
 }
@@ -127,18 +176,41 @@ function draw() {
 function mousePressed() {
   // Check if mouse is over one of the elements
   for (var i = boxes.length - 1; i >= 0; --i) {
-    if (boxes[i].is_inside(mouseX, mouseY)) {
-      // TODO: check if mouse is over one of the connections
-      current_box = boxes[i];
-      current_offset = [mouseX - boxes[i].x, mouseY - boxes[i].y];
-      boxes[i].set_text_color([255,0,0]);
-      break;
+    // check corners
+    let corner = boxes[i].check_corners();
+    if (corner != -1) {
+      // Store corner that this connection is coming from
+      current_corner = [boxes[i], corner];
+    }
+    else {
+      if (boxes[i].is_inside(mouseX, mouseY)) {
+        current_box = boxes[i];
+        current_offset = [mouseX - boxes[i].x, mouseY - boxes[i].y];
+        boxes[i].set_text_color([255,0,0]);
+        break;
+      }
     }
   }
   //boxes.push(new DraggableBox(mouseX, mouseY, 80, 80, "test", [255,255,255]));
 }
 
 function mouseReleased() {
+  if (current_corner != null) {
+    for (var i = boxes.length - 1; i >= 0; --i) {
+      if (current_corner[0] !== boxes[i]) {
+        // check corners
+        let corner = boxes[i].check_corners();
+        if (corner != -1) {
+          // End the connection at this corner of this box
+          current_corner[0].edgeConnections.push([boxes[i], current_corner[1], corner]);
+          boxes[i].edgeConnections.push([current_corner[0], corner, current_corner[1]]);
+          current_corner = null;
+          return;
+        }
+      }
+    }
+    current_corner = null;
+  }
   if (current_box != null) {
     current_box.set_text_color([0,0,0]);
     current_box = null;
