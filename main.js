@@ -3,13 +3,15 @@ let START_GAME_FLAG = 0
 //maintain levels of the game
 class GameLevels {
 
-  constructor(adj,id){
+  constructor(adj,id,txt){
     // gets level and an id assosiated with it
+    this.levelsText = {id:txt}
     this.levels = {id:adj}
   }
   // add a level
-  addLevel(adj,id){
+  addLevel(adj,id,txt){
     this.levels[id] = adj
+    this.levelsText[id] = txt
   }
   // get a level by id
   getLevelatId(id) {
@@ -19,6 +21,7 @@ class GameLevels {
   getAllIds(){
     return Object.keys(this.levels)
   }
+
 
 
 }
@@ -252,21 +255,27 @@ function validatePuzzle(expectedResults){
     return True
 }
 
-function mySelectEvent() {
-  let item = levelSelector.value();
-  background(200);
-  text('It is a ' + item + '!', 50, 50);
-}
+class SelectorGUI {
 
-function selectLevel(){
-  textAlign(CENTER);
-  levelSelector = createSelect();
-  levelSelector.position(10, 10);
-  levelSelector.option('1');
-  levelSelector.option('2');
-  levelSelector.option('3');
-  levelSelector.selected('1');
-  levelSelector.changed(mySelectEvent);
+  constructor(){
+    let levelCollection = new GameLevels();
+   
+    let selectElm = document.createElement('div');
+    selectElm.className = `dropdown`
+    selectElm.innerHTML = ` <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+    Dropdown button
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+    <li><a class="dropdown-item" href="#">Action</a></li>
+    <li><a class="dropdown-item" href="#">Another action</a></li>
+    <li><a class="dropdown-item" href="#">Something else here</a></li>
+  </ul>`
+
+    selectElm.style = "position: absolute;top:20px;"
+
+    document.getElementById("yesover").appendChild(selectElm)
+
+  }
 }
 
 function preload(){
@@ -276,7 +285,7 @@ function preload(){
 function setup() {
   let canvasElm = createCanvas(windowWidth, windowHeight);
   canvasElm.parent("canvasElm")
-  selectLevel()
+  levelSelector = new SelectorGUI()
   song.play()
   mainGUI = new GUI()
 
