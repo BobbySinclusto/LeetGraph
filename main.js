@@ -88,7 +88,6 @@ class DraggableBox {
 
     //connectable components
     // Add inputs:
-    fill(this.inputs_color[0], this.inputs_color[1], this.inputs_color[2]);
     // edge case where there's only one input
     if (this.inputs == 1) {
       
@@ -117,28 +116,31 @@ class DraggableBox {
     // rotate box
     if (this.rotateFactor > 0){
       for (let blank = 0; blank <= this.rotateFactor % 4; blank++ ){
-        for (let vv in this.corners){
+        for (let corner_idx in this.corners) {
+          let center = [this.x + this.corners[corner_idx][2]*2, this.y + this.corners[corner_idx][2]*2]
+          let x1 = this.corners[corner_idx][0] - center[0];
+          let y1 = this.corners[corner_idx][1] - center[1];
 
-            let center = [this.x + this.corners[vv][2]*2, this.y + this.corners[vv][2]*2]
-            let x1 = this.corners[vv][0] - center[0];
-            let y1 = this.corners[vv][1] - center[1];
+          let x2 =  - y1;
+          let y2 = x1;
 
-            let x2 =  - y1;
-            let y2 = x1;
-
-            this.corners[vv][0] = x2 + center[0];
-            this.corners[vv][1] = y2 + center[1];
-            
-            ellipse(this.corners[vv][0], this.corners[vv][1], this.width/4);
-          }
+          this.corners[corner_idx][0] = x2 + center[0];
+          this.corners[corner_idx][1] = y2 + center[1];
         }
-      } else {
-        for (let vv in this.corners){
-
-          ellipse(this.corners[vv][0], this.corners[vv][1], this.width/4);
-        }
+      }
     }
-  
+
+    // Color inputs
+    fill(this.inputs_color[0], this.inputs_color[1], this.inputs_color[2]);
+    for (var i = 0; i < this.inputs; ++i) {
+      ellipse(this.corners[i][0], this.corners[i][1], this.width/4);
+    }
+
+    // Color outputs
+    fill(this.outputs_color[0], this.outputs_color[1], this.outputs_color[2]);
+    for (var i = this.inputs; i < this.inputs + this.outputs; ++i) {
+      ellipse(this.corners[i][0], this.corners[i][1], this.width/4);
+    }
   
     // Description text
     textAlign(CENTER, CENTER);
