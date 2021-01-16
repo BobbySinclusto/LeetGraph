@@ -44,9 +44,8 @@ class DraggableBox {
     this.inputs = inputs;
     this.outputs = outputs;
     this.text_size = 15;
-    fill(50, 150, 255);
-    this.inputs_color = [187, 134, 252];
-    this.outputs_color = [3, 218, 198];
+    this.inputs_color = [3, 218, 198];
+    this.outputs_color = [187, 134, 252];
   }
 
   set_text_color(color) {
