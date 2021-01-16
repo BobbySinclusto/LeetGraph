@@ -44,6 +44,7 @@ class DraggableBox {
     this.inputs = inputs;
     this.outputs = outputs;
     this.text_size = 15;
+    this.rotateFactor = 0;
   }
 
   set_text_color(color) {
@@ -90,28 +91,54 @@ class DraggableBox {
     // Add inputs:
     // edge case where there's only one input
     if (this.inputs == 1) {
-      ellipse(this.x, this.y + this.height / 2, this.width/4);
+      
       this.corners[0] = [this.x, this.y + this.height / 2, this.width/4];
     }
     else {
       for (var i = 0; i < this.inputs; ++i) {
-        ellipse(this.x, this.y + i * this.height / (this.inputs - 1), this.width/4);
+        
         this.corners[i] = [this.x, this.y + i * this.height / (this.inputs - 1), this.width/4];
       }
     }
 
     // Add outputs:
     if (this.outputs == 1) {
-      ellipse(this.x + this.width, this.y + this.height / 2, this.width/4);
+     
       this.corners[this.inputs] = [this.x + this.width, this.y + this.height / 2, this.width/4];
     }
     else {
       for (var i = 0; i < this.outputs; ++i) {
-        ellipse(this.x + this.width, this.y + i * this.height / (this.outputs - 1), this.width/4);
+        
         this.corners[i + this.inputs] = [this.x + this.width, this.y + i * this.height / (this.outputs - 1), this.width/4];
       }
     }
 
+    // rotate box
+    if (this.rotateFactor > 0){
+      for (let blank = 0; blank <= this.rotateFactor % 4; blank++ ){
+        for (let vv in this.corners){
+
+            let center = [this.x + this.corners[vv][2]*2, this.y + this.corners[vv][2]*2]
+            let x1 = this.corners[vv][0] - center[0];
+            let y1 = this.corners[vv][1] - center[1];
+
+            let x2 =  - y1;
+            let y2 = x1;
+
+            this.corners[vv][0] = x2 + center[0];
+            this.corners[vv][1] = y2 + center[1];
+            
+            ellipse(this.corners[vv][0], this.corners[vv][1], this.width/4);
+          }
+        }
+      } else {
+        for (let vv in this.corners){
+
+          ellipse(this.corners[vv][0], this.corners[vv][1], this.width/4);
+        }
+    }
+  
+  
     // Description text
     textAlign(CENTER, CENTER);
     fill(this.text_color[0],this.text_color[1],this.text_color[2]);
@@ -321,7 +348,7 @@ function add_boxes_from_graph(adj) {
   for (node in adj) {
     boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, adj[node][1].length));
   }
-
+  boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, 5));
   // Shuffle array
   shuffleArray(boxes);
 
@@ -433,7 +460,9 @@ function mousePressed() {
       if (boxes[i].is_inside(mouseX, mouseY)) {
         current_box = boxes[i];
         current_offset = [mouseX - boxes[i].x, mouseY - boxes[i].y];
-        boxes[i].set_text_color([180,200,200]);
+        
+        boxes[i].rotateFactor += 1
+        boxes[i].set_text_color([0,200,200]);
         break;
       }
     }
