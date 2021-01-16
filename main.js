@@ -1,12 +1,19 @@
 function setup() {
-    createCanvas(400, 400);
-  }
   
-  function draw() {
-    if (mouseIsPressed) {
-      fill(0);
-    } else {
-      fill(255);
-    }
-    ellipse(mouseX, mouseY, 80, 80);
-  }
+  createCanvas(windowWidth, windowHeight);
+  background(51);
+}
+
+function draw() {
+  if (mouseIsPressed) {
+    clear();
+    background(51);
+  } 
+  ellipse(mouseX, mouseY, 40, 40);
+}
+
+function windowResized() { 
+  resizeCanvas(windowWidth, windowHeight);
+  clear();
+  background(51);
+} 
