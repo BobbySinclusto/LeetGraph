@@ -84,7 +84,8 @@ class DraggableBox {
     // Description text
     textAlign(CENTER, CENTER);
     fill(this.text_color[0],this.text_color[1],this.text_color[2]);
-    text(this.description, this.x, this.y, this.width, this.height);
+    textSize(12);
+    text(this.description, this.x + this.width / 16, this.y + this.height / 16, this.width - this.width / 8, this.height - this.height / 8);
 
     // Draw connections
     for (var connection of this.edgeConnections) {
@@ -213,9 +214,9 @@ function setup() {
   //mainGUI = new GUI()
 
   background(0);
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Output", 1, 3));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Sort one half", 4, 1));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Sort the other half", 2, 2));
+  boxes.push(new DraggableBox(200, 200, 100, 100, "Output", 1, 3));
+  boxes.push(new DraggableBox(200, 200, 100, 100, "Sort one half", 4, 1));
+  boxes.push(new DraggableBox(200, 200, 100, 100, "Sort the other half", 2, 2));
 }
 
 
@@ -272,6 +273,21 @@ function mousePressed() {
     // check corners
     let corner = boxes[i].check_corners();
     if (corner != -1) {
+      // Check that this corner doesn't already have a connection
+      for (connection in boxes[i].edgeConnections) {
+        if (corner == boxes[i].edgeConnections[connection][1]) {
+          // Update current corner to the corner this is connected to
+          current_corner = [boxes[i].edgeConnections[connection][0], boxes[i].edgeConnections[connection][2]];
+          // Disconnect this connection
+          boxes[i].edgeConnections.splice(connection, 1);
+          for (i in current_corner[0].edgeConnections) {
+            if (current_corner[0].edgeConnections[i][1] == current_corner[1]) {
+              current_corner[0].edgeConnections.splice(i, 1);
+            }
+          }
+          return;
+        }
+      }
       // Store corner that this connection is coming from
       current_corner = [boxes[i], corner];
     }
