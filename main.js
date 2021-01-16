@@ -1,5 +1,28 @@
 let START_GAME_FLAG = 0
 
+//maintain levels of the game
+class GameLevels {
+
+  constructor(adj,id){
+    // gets level and an id assosiated with it
+    this.levels = {id:adj}
+  }
+  // add a level
+  addLevel(adj,id){
+    this.levels[id] = adj
+  }
+  // get a level by id
+  getLevelatId(id) {
+    return this.levels[id]
+  }
+  // a an array of ids 
+  getAllIds(){
+    return Object.keys(this.levels)
+  }
+
+
+}
+
 class DraggableBox {
   constructor(x, y, width, height, description, inputs = 2, outputs = 2) {
     this.edgeConnections = [];
