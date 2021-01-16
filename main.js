@@ -170,7 +170,8 @@ class GUI {
     
     let startButton = document.createElement('button');
     startButton.textContent = "Start Game"
-    startButton.style = "position: absolute;top:20px;"
+    startButton.className = 'btn btn-primary'
+    startButton.style = "position: absolute;top:50px; left:200px"
     startButton.onclick = this.startGame.bind(this)
     document.getElementById("rightCol").appendChild(startButton)
     
@@ -186,13 +187,15 @@ class GUI {
 
     let aboutButton = document.createElement('button');
     aboutButton.textContent = "About"
-    aboutButton.style = "position: absolute;top:40px;"
+    aboutButton.className = 'btn btn-primary'
+    aboutButton.style = "position: absolute;top:50px; left:350px"
     document.getElementById("rightCol").appendChild(aboutButton)
     aboutButton.onclick = this.showAbout.bind(this)
 
     let removeEdges = document.createElement('button');
     removeEdges.textContent = "Remove Edges"
-    removeEdges.style = "position: absolute;top:60px;"
+    removeEdges.className = 'btn btn-primary'
+    removeEdges.style = "position: absolute;top:50px; left:460px"
     document.getElementById("rightCol").appendChild(removeEdges)
     removeEdges.onclick = this.removeAllEdges.bind(this)
 
@@ -272,15 +275,15 @@ class SelectorGUI {
     let selectElm = document.createElement('div');
     selectElm.className = `dropdown`
     selectElm.innerHTML = ` <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
-    Dropdown button
+    Problems
   </button>
-  <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+  <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
     ${linkText}
   </ul>`
 
-    selectElm.style = "position: absolute;top:20px;"
+    selectElm.style = "position: absolute;top:50px; left:52px"
 
-    document.getElementById("yesover").appendChild(selectElm)
+    document.getElementById("rightCol").appendChild(selectElm)
 
     for (let i in this.levelCollection.levels){
       document.getElementById(i).onclick = this.changeLevel(i).bind(this)
@@ -323,8 +326,8 @@ function add_boxes_from_graph(adj) {
   shuffleArray(boxes);
 
   // Add boxes to play area in a nice grid type pattern thingy
-  y_pos = height / 16;
-  x_pos = y_pos;
+  y_pos = height / 16 + 230;
+  x_pos = height / 16;
   for (i in boxes) {
     if (i != 0 && x_pos + boxes[i].width + height / 16 > width) {
       y_pos += boxes[i].height + height / 16;
