@@ -184,9 +184,9 @@ function setup() {
   mainGUI = new GUI()
 
   background(0);
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Bob", [255,255,255]));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "Joey", [255,255,255]));
-  boxes.push(new DraggableBox(200, 200, 80, 80, "asdf", [255,0,255]));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Output", [255,255,255]));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Sort one half", [255,255,255]));
+  boxes.push(new DraggableBox(200, 200, 80, 80, "Sort the other half", [255,0,255]));
 }
 
 
@@ -199,10 +199,17 @@ function draw() {
   // Check if mouse is over one of the elements
   if (current_box != null) {
     // update box position
-    current_box.x = mouseX - current_offset[0];
-    current_box.y = mouseY - current_offset[1];
+    // make sure our movement is within boundry
+    if (mouseX - current_offset[0] > 0 && mouseX - current_offset[0] + current_box.width < windowWidth ) {
+      if (mouseY - current_offset[1] > 0 && mouseY - current_offset[1] + current_box.height < windowHeight ) {
+      
+          current_box.x = mouseX - current_offset[0];
+          current_box.y = mouseY - current_offset[1];
+      }
+    }
   }
 
+  
   for (thing of boxes) {
     thing.draw();
   }
