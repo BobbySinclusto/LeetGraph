@@ -25,6 +25,9 @@ class DraggableBox {
     return x <= this.x + this.width && y <= this.y + this.height && x >= this.x && y >= this.y;
   }
 
+  get_corners(){
+
+  }
   draw() {
     fill(this.color[0],this.color[1],this.color[2]);
     rect(this.x, this.y, this.width, this.height, 10);
@@ -47,13 +50,22 @@ class GUI {
   addButtons() {
     this.GUIarray = []
     let startButton = createButton('Start Game');
+
     startButton.position(windowWidth / 2, windowHeight / 2);
     startButton.mousePressed(this.startGame.bind(this))
-
+    startButton.style('color',"rgb(225, 227, 198)")
+    startButton.style('background-color','transparent')
+    startButton.style('border-color','antiquewhite')
+    startButton.style('padding','1%')
     let aboutButton = createButton('About');
-    aboutButton.position(windowWidth / 2 + 100, windowHeight / 2);
-    aboutButton.mousePressed(this.showAbout.bind(this))
 
+    aboutButton.position(windowWidth / 2 + 150, windowHeight / 2);
+    
+    aboutButton.mousePressed(this.showAbout.bind(this))
+    aboutButton.style('color',"rgb(225, 227, 198)")
+    aboutButton.style('background-color','transparent')
+    aboutButton.style('border-color','antiquewhite')
+    aboutButton.style('padding','1%')
     this.GUIarray.push(startButton)
     this.GUIarray.push(aboutButton)
   }
@@ -69,6 +81,7 @@ class GUI {
   showAbout(thi) {
     this.removeAllButtons()
     clear()
+    window.location = "about.html"
     background(70);
   }
 
