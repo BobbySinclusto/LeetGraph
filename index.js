@@ -2,11 +2,11 @@ window.onload = function() {
     console.log("welcome to the about page!")
 
     document.getElementById("downloadResumes").onclick = () => {
-        window.location = "Arshia-and-Allen-Resume.pdf"
+        window.location = "https://bobbysinclusto.github.io/hacky-heap/Arshia-and-Allen-Resume.pdf"
     }
     
     document.getElementById("playGame").onclick = () => {
-        window.location = "game.html"
+        window.location = "https://bobbysinclusto.github.io/hacky-heap/game.html"
     }
 
 
