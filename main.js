@@ -205,7 +205,7 @@ class GUI {
     // this is a bait! It validates instead.
     let startButton = document.createElement('button');
     startButton.textContent = "Validate"
-    startButton.className = 'btn btn-primary'
+    startButton.className = 'btn btn-secondary'
     //startButton.style = "position: absolute;top:50px; left:200px"
     startButton.onclick = this.startGame.bind(this)
     document.getElementById("uiBox").appendChild(startButton)
@@ -222,14 +222,14 @@ class GUI {
 
     let aboutButton = document.createElement('button');
     aboutButton.textContent = "About"
-    aboutButton.className = 'btn btn-primary'
+    aboutButton.className = 'btn btn-secondary'
     //aboutButton.style = "position: absolute;top:50px; left:350px"
     document.getElementById("uiBox").appendChild(aboutButton)
     aboutButton.onclick = this.showAbout.bind(this)
 
     let removeEdges = document.createElement('button');
     removeEdges.textContent = "Remove Edges"
-    removeEdges.className = 'btn btn-primary'
+    removeEdges.className = 'btn btn-secondary'
     //removeEdges.style = "position: absolute;top:50px; left:460px"
     document.getElementById("uiBox").appendChild(removeEdges)
     removeEdges.onclick = this.removeAllEdges.bind(this)
@@ -253,7 +253,7 @@ class GUI {
   showAbout(thi) {
     this.removeAllButtons()
     clear()
-    window.location = "about.html"
+    window.location = "index.html"
   }
 
   removeAllEdges(){

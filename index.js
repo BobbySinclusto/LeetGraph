@@ -2,7 +2,7 @@ window.onload = function() {
     console.log("welcome to the about page!")
 
     document.getElementById("downloadResumes").onclick = () => {
-        //window.location
+        window.location = "Arshia-and-Allen-Resume.pdf"
     }
     
     document.getElementById("playGame").onclick = () => {
