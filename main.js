@@ -428,6 +428,10 @@ function add_boxes_from_graph(adj) {
   }
 }
 
+
+  
+
+
 function setup() {
   let canvasElm = createCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
   canvasElm.parent("canvasElm")
