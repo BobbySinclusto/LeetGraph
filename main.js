@@ -44,6 +44,9 @@ class DraggableBox {
     this.inputs = inputs;
     this.outputs = outputs;
     this.text_size = 15;
+    this.inputs_color = [3, 218, 198];
+    this.outputs_color = [187, 134, 252];
+    this.rotateFactor = 3;
   }
 
   set_text_color(color) {
@@ -84,44 +87,73 @@ class DraggableBox {
     rect(this.x, this.y, this.width, this.height, 10);
 
     //connectable components
-    // Color to draw the corners:
-    fill(50, 150, 255);
-
     // Add inputs:
     // edge case where there's only one input
     if (this.inputs == 1) {
-      ellipse(this.x, this.y + this.height / 2, this.width/4);
+      
       this.corners[0] = [this.x, this.y + this.height / 2, this.width/4];
     }
     else {
       for (var i = 0; i < this.inputs; ++i) {
-        ellipse(this.x, this.y + i * this.height / (this.inputs - 1), this.width/4);
+        
         this.corners[i] = [this.x, this.y + i * this.height / (this.inputs - 1), this.width/4];
       }
     }
 
     // Add outputs:
+    fill(this.outputs_color[0], this.outputs_color[1], this.outputs_color[2]);
     if (this.outputs == 1) {
-      ellipse(this.x + this.width, this.y + this.height / 2, this.width/4);
+     
       this.corners[this.inputs] = [this.x + this.width, this.y + this.height / 2, this.width/4];
     }
     else {
       for (var i = 0; i < this.outputs; ++i) {
-        ellipse(this.x + this.width, this.y + i * this.height / (this.outputs - 1), this.width/4);
+        
         this.corners[i + this.inputs] = [this.x + this.width, this.y + i * this.height / (this.outputs - 1), this.width/4];
       }
     }
 
+    // rotate box
+    if (this.rotateFactor >= 0){
+      for (let blank = 0; blank <= this.rotateFactor % 4; blank++ ){
+        for (let corner_idx in this.corners) {
+          let center = [this.x + this.corners[corner_idx][2]*2, this.y + this.corners[corner_idx][2]*2]
+          let x1 = this.corners[corner_idx][0] - center[0];
+          let y1 = this.corners[corner_idx][1] - center[1];
+
+          let x2 =  - y1;
+          let y2 = x1;
+
+          this.corners[corner_idx][0] = x2 + center[0];
+          this.corners[corner_idx][1] = y2 + center[1];
+        }
+      }
+    }
+
+    // Color inputs
+    fill(this.inputs_color[0], this.inputs_color[1], this.inputs_color[2]);
+    for (var i = 0; i < this.inputs; ++i) {
+      ellipse(this.corners[i][0], this.corners[i][1], this.width/4);
+    }
+
+    // Color outputs
+    fill(this.outputs_color[0], this.outputs_color[1], this.outputs_color[2]);
+    for (var i = this.inputs; i < this.inputs + this.outputs; ++i) {
+      ellipse(this.corners[i][0], this.corners[i][1], this.width/4);
+    }
+  
     // Description text
     textAlign(CENTER, CENTER);
     fill(this.text_color[0],this.text_color[1],this.text_color[2]);
     textSize(this.text_size);
+
+    let margin = this.width / 8;
     // fix dumb hyphenated text wrapping for words
     let lines_arr = [];
     var current_line = "";
     for (var word of this.description.split(' ')) {
       let new_line = current_line == "" ? word : (current_line + " " + word);
-      if (textWidth(new_line) <= this.width - this.width/8) {
+      if (textWidth(new_line) <= this.width - margin * 2) {
         current_line = new_line;
       }
       else {
@@ -136,7 +168,7 @@ class DraggableBox {
     let container_top = this.y + this.height / 2 - total_height / 2;
 
     for (i in lines_arr) {
-      text(lines_arr[i], this.x + this.width / 16, container_top + height_offset * i, this.width - this.width / 8, this.text_size);
+      text(lines_arr[i], this.x + margin, container_top + height_offset * i, this.width - margin * 2, this.text_size);
     }
 
     // Draw connections
@@ -162,18 +194,21 @@ class DraggableBox {
 
 class GUI {
   constructor() {
+    document.getElementById("problemH1").innerText = levelSelector.currentLevel
+    document.getElementById("problemText").innerText = levelSelector.levelCollection.levelsText[levelSelector.currentLevel]
     this.addButtons()
   }
 
   addButtons() {
     this.GUIarray = []
     
+    // this is a bait! It validates instead.
     let startButton = document.createElement('button');
-    startButton.textContent = "Start Game"
-    startButton.className = 'btn btn-primary'
-    startButton.style = "position: absolute;top:50px; left:200px"
+    startButton.textContent = "Validate"
+    startButton.className = 'btn btn-secondary'
+    //startButton.style = "position: absolute;top:50px; left:200px"
     startButton.onclick = this.startGame.bind(this)
-    document.getElementById("rightCol").appendChild(startButton)
+    document.getElementById("uiBox").appendChild(startButton)
     
     this.styledict = {
       'color': "rgb(225, 227, 198)",
@@ -187,16 +222,16 @@ class GUI {
 
     let aboutButton = document.createElement('button');
     aboutButton.textContent = "About"
-    aboutButton.className = 'btn btn-primary'
-    aboutButton.style = "position: absolute;top:50px; left:350px"
-    document.getElementById("rightCol").appendChild(aboutButton)
+    aboutButton.className = 'btn btn-secondary'
+    //aboutButton.style = "position: absolute;top:50px; left:350px"
+    document.getElementById("uiBox").appendChild(aboutButton)
     aboutButton.onclick = this.showAbout.bind(this)
 
     let removeEdges = document.createElement('button');
     removeEdges.textContent = "Remove Edges"
-    removeEdges.className = 'btn btn-primary'
-    removeEdges.style = "position: absolute;top:50px; left:460px"
-    document.getElementById("rightCol").appendChild(removeEdges)
+    removeEdges.className = 'btn btn-secondary'
+    //removeEdges.style = "position: absolute;top:50px; left:460px"
+    document.getElementById("uiBox").appendChild(removeEdges)
     removeEdges.onclick = this.removeAllEdges.bind(this)
 
     this.GUIarray.push(startButton)
@@ -205,7 +240,9 @@ class GUI {
   }
 
   startGame(thi) {
-    validatePuzzle(level1);
+    
+    let adj_list = levelSelector.levelCollection.levels[levelSelector.currentLevel]
+    alert(validatePuzzle(adj_list));
     // console.log("bruh")
     // this.removeAllButtons()
     // clear()
@@ -216,8 +253,7 @@ class GUI {
   showAbout(thi) {
     this.removeAllButtons()
     clear()
-    window.location = "about.html"
-    background(70);
+    window.location = "index.html"
   }
 
   removeAllEdges(){
@@ -244,6 +280,8 @@ current_offset = null;
 current_corner = null;
 
 let levelSelector;
+let saved_mouse_position = null;
+let loaded = false;
 
 function validatePuzzle(expectedResults){
   // compare adjaceny lits!
@@ -272,12 +310,12 @@ function validatePuzzle(expectedResults){
       }
       if (!key_is_in_box_connections) {
         // If nothing matches return false
-        print("not valid");
-        return false;
+        return "not valid"
+        
       }
     }
   }
-  return true;
+  return "valid!"
 }
 
 class SelectorGUI {
@@ -302,10 +340,11 @@ class SelectorGUI {
   <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
     ${linkText}
   </ul>`
+    let adj_list = this.levelCollection.levels[this.currentLevel]
+    add_boxes_from_graph(adj_list);
+    //selectElm.style = "position: absolute;top:50px; left:52px"
 
-    selectElm.style = "position: absolute;top:50px; left:52px"
-
-    document.getElementById("rightCol").appendChild(selectElm)
+    document.getElementById("uiBox").appendChild(selectElm);
 
     for (let i in this.levelCollection.levels){
       document.getElementById(i).onclick = this.changeLevel(i).bind(this)
@@ -317,6 +356,9 @@ class SelectorGUI {
     return function ()  {
       console.log("time to change level!",levelID)
       this.currentLevel = levelID
+      let adj_list = this.levelCollection.levels[this.currentLevel];
+      boxes = [];
+      add_boxes_from_graph(adj_list);
       document.getElementById("problemH1").innerText = this.currentLevel
       document.getElementById("problemText").innerText = this.levelCollection.levelsText[levelID]
       // change problem text and current level!
@@ -325,8 +367,10 @@ class SelectorGUI {
   }
 }
 
+let backgroundImage;
 function preload(){
   song = loadSound('polish_cow.mp3');
+
 }
 
 function shuffleArray(array) {
@@ -341,9 +385,8 @@ function shuffleArray(array) {
 function add_boxes_from_graph(adj) {
   // Loop through each node
   for (node in adj) {
-    boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, adj[node][1].length));
+    boxes.push(new DraggableBox(200, 200, 150, 150, node, adj[node][0].length, adj[node][1].length));
   }
-
   // Shuffle array
   shuffleArray(boxes);
 
@@ -394,13 +437,11 @@ function setup() {
   song.play()
   mainGUI = new GUI()
 
-  background(0);
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Output", 1, 3));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort one half", 4, 1));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort the other half", 2, 2));
 
-  // Temporary debugging
-  add_boxes_from_graph(level1);
+  
   
 }
 
@@ -409,7 +450,6 @@ function setup() {
 function draw() {
   // Clear screen
   clear();
-  background(5);
 
   // Check if mouse is over one of the elements
   if (current_box != null) {
@@ -447,6 +487,16 @@ function draw() {
     stroke(0);
     strokeWeight(1);
   }
+
+  // Check if mouse moved
+  if (saved_mouse_position != null && (saved_mouse_position[0] != mouseX || saved_mouse_position[1] != mouseY)) {
+    saved_mouse_position = null;
+  }
+
+  if (!loaded) {
+    loaded=true;
+    document.getElementById("overlay-thingy").remove();
+  }
 }
 
 function mousePressed() {
@@ -477,7 +527,9 @@ function mousePressed() {
       if (boxes[i].is_inside(mouseX, mouseY)) {
         current_box = boxes[i];
         current_offset = [mouseX - boxes[i].x, mouseY - boxes[i].y];
-        boxes[i].set_text_color([180,200,200]);
+        // Update saved mouse position
+        saved_mouse_position = [mouseX, mouseY];
+        boxes[i].set_text_color([0,200,200]);
         break;
       }
     }
@@ -524,6 +576,9 @@ function mouseReleased() {
     current_corner = null;
   }
   if (current_box != null) {
+    if (saved_mouse_position != null) {
+      current_box.rotateFactor += 1;
+    }
     current_box.set_text_color([200,220,220]);
     current_box = null;
     current_offset = null;
@@ -542,5 +597,4 @@ function windowResized() {
     }
   }
   clear();
-  background(51);
 }

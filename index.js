@@ -2,8 +2,13 @@ window.onload = function() {
     console.log("welcome to the about page!")
 
     document.getElementById("downloadResumes").onclick = () => {
-        //window.location
+        window.location = "Arshia-and-Allen-Resume.pdf"
     }
+    
+    document.getElementById("playGame").onclick = () => {
+        window.location = "game.html"
+    }
+
 
     //load the interactive background!
     VANTA.NET({
@@ -17,4 +22,5 @@ window.onload = function() {
         scaleMobile: 1.00,
         backgroundColor: 0xd0d14
       })
+    document.getElementById("overlay-thingy").remove();
 }
