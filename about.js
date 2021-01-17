@@ -4,6 +4,11 @@ window.onload = function() {
     document.getElementById("downloadResumes").onclick = () => {
         //window.location
     }
+    
+    document.getElementById("playGame").onclick = () => {
+        window.location = "index.html"
+    }
+
 
     //load the interactive background!
     VANTA.NET({
