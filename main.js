@@ -371,7 +371,7 @@ class SelectorGUI {
 let backgroundImage;
 function preload(){
   song = loadSound('polish_cow.mp3');
-  backgroundImage = loadImage('darkbg.png');
+
 }
 
 function shuffleArray(array) {
