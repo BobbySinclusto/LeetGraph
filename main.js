@@ -253,7 +253,7 @@ class GUI {
   showAbout(thi) {
     this.removeAllButtons()
     clear()
-    window.location = "https://bobbysinclusto.github.io/hacky-heap/index.html"
+    window.location = "http://leetgraph.tech/index.html"
   }
 
   removeAllEdges(){
