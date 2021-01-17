@@ -274,7 +274,6 @@ class GUI {
 var mainGUI;
 
 let boxes = [];
-let song;
 current_box = null;
 current_offset = null;
 current_corner = null;
@@ -367,12 +366,6 @@ class SelectorGUI {
   }
 }
 
-let backgroundImage;
-function preload(){
-  song = loadSound('polish_cow.mp3');
-
-}
-
 function shuffleArray(array) {
   for (var i = array.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1));
@@ -434,7 +427,6 @@ function setup() {
   let canvasElm = createCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
   canvasElm.parent("canvasElm")
   levelSelector = new SelectorGUI()
-  song.play()
   mainGUI = new GUI()
 
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Output", 1, 3));
