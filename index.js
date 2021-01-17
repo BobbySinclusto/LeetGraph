@@ -22,4 +22,5 @@ window.onload = function() {
         scaleMobile: 1.00,
         backgroundColor: 0xd0d14
       })
+    document.getElementById("overlay-thingy").remove();
 }

@@ -206,9 +206,9 @@ class GUI {
     let startButton = document.createElement('button');
     startButton.textContent = "Validate"
     startButton.className = 'btn btn-primary'
-    startButton.style = "position: absolute;top:50px; left:200px"
+    //startButton.style = "position: absolute;top:50px; left:200px"
     startButton.onclick = this.startGame.bind(this)
-    document.getElementById("rightCol").appendChild(startButton)
+    document.getElementById("uiBox").appendChild(startButton)
     
     this.styledict = {
       'color': "rgb(225, 227, 198)",
@@ -223,15 +223,15 @@ class GUI {
     let aboutButton = document.createElement('button');
     aboutButton.textContent = "About"
     aboutButton.className = 'btn btn-primary'
-    aboutButton.style = "position: absolute;top:50px; left:350px"
-    document.getElementById("rightCol").appendChild(aboutButton)
+    //aboutButton.style = "position: absolute;top:50px; left:350px"
+    document.getElementById("uiBox").appendChild(aboutButton)
     aboutButton.onclick = this.showAbout.bind(this)
 
     let removeEdges = document.createElement('button');
     removeEdges.textContent = "Remove Edges"
     removeEdges.className = 'btn btn-primary'
-    removeEdges.style = "position: absolute;top:50px; left:460px"
-    document.getElementById("rightCol").appendChild(removeEdges)
+    //removeEdges.style = "position: absolute;top:50px; left:460px"
+    document.getElementById("uiBox").appendChild(removeEdges)
     removeEdges.onclick = this.removeAllEdges.bind(this)
 
     this.GUIarray.push(startButton)
@@ -282,6 +282,7 @@ current_corner = null;
 
 let levelSelector;
 let saved_mouse_position = null;
+let loaded = false;
 
 function validatePuzzle(expectedResults){
   // compare adjaceny lits!
@@ -342,9 +343,9 @@ class SelectorGUI {
   </ul>`
     let adj_list = this.levelCollection.levels[this.currentLevel]
     add_boxes_from_graph(adj_list);
-    selectElm.style = "position: absolute;top:50px; left:52px"
+    //selectElm.style = "position: absolute;top:50px; left:52px"
 
-    document.getElementById("rightCol").appendChild(selectElm)
+    document.getElementById("uiBox").appendChild(selectElm);
 
     for (let i in this.levelCollection.levels){
       document.getElementById(i).onclick = this.changeLevel(i).bind(this)
@@ -492,6 +493,11 @@ function draw() {
   // Check if mouse moved
   if (saved_mouse_position != null && (saved_mouse_position[0] != mouseX || saved_mouse_position[1] != mouseY)) {
     saved_mouse_position = null;
+  }
+
+  if (!loaded) {
+    loaded=true;
+    document.getElementById("overlay-thingy").remove();
   }
 }
 
