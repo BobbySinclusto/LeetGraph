@@ -367,8 +367,10 @@ class SelectorGUI {
   }
 }
 
+let backgroundImage;
 function preload(){
   song = loadSound('polish_cow.mp3');
+  backgroundImage = loadImage('darkbg.png');
 }
 
 function shuffleArray(array) {
@@ -428,10 +430,6 @@ function add_boxes_from_graph(adj) {
   }
 }
 
-
-  
-
-
 function setup() {
   let canvasElm = createCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
   canvasElm.parent("canvasElm")
@@ -439,7 +437,7 @@ function setup() {
   song.play()
   mainGUI = new GUI()
 
-  background(0);
+  
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Output", 1, 3));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort one half", 4, 1));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort the other half", 2, 2));
@@ -453,7 +451,6 @@ function setup() {
 function draw() {
   // Clear screen
   clear();
-  background(5);
 
   // Check if mouse is over one of the elements
   if (current_box != null) {
@@ -596,5 +593,6 @@ function windowResized() {
     }
   }
   clear();
-  background(51);
+
+
 }
