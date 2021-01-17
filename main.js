@@ -254,7 +254,7 @@ class GUI {
     this.removeAllButtons()
     clear()
     window.location = "about.html"
-    background(70);
+    background('rgba(0,0,0,0)');
   }
 
   removeAllEdges(){
@@ -440,7 +440,7 @@ function setup() {
   song.play()
   mainGUI = new GUI()
 
-  background(0);
+  background('rgba(0,0,0,0)');
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Output", 1, 3));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort one half", 4, 1));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort the other half", 2, 2));
@@ -454,7 +454,7 @@ function setup() {
 function draw() {
   // Clear screen
   clear();
-  background(5);
+  background('rgba(0,0,0,0)');
 
   // Check if mouse is over one of the elements
   if (current_box != null) {
@@ -602,5 +602,5 @@ function windowResized() {
     }
   }
   clear();
-  background(51);
+  background('rgba(0,0,0,0)');
 }

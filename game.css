@@ -15,6 +15,7 @@ body, html {
   }
 
 #yesover {
+    z-index: 100;
     overflow-y: auto; 
     color:rgb(233, 233, 233);
     font-family: sans-serif;
@@ -70,6 +71,35 @@ h1 {
     width: 120px;
     height: 120px;
     animation: spin 2s linear infinite;
+}
+
+.bg-image {
+    position:absolute;
+    top:0;
+    left:0;
+    z-index:0;
+    width:100%;
+    height:100%;
+    /* The image used */
+    background-image: url("background.png");
+
+    /* Add the blur effect */
+    filter: blur(15px);
+    -webkit-filter: blur(15px);
+    opacity: 70%;
+
+    /* Full height */
+    height: 100%;
+
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+#canvasElm {
+    background-color: transparent;
+    z-index: 100;
 }
 
 @keyframes spin {
