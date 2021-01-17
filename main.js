@@ -254,7 +254,6 @@ class GUI {
     this.removeAllButtons()
     clear()
     window.location = "about.html"
-    background('rgba(0,0,0,0)');
   }
 
   removeAllEdges(){
@@ -368,8 +367,10 @@ class SelectorGUI {
   }
 }
 
+let backgroundImage;
 function preload(){
   song = loadSound('polish_cow.mp3');
+
 }
 
 function shuffleArray(array) {
@@ -384,7 +385,7 @@ function shuffleArray(array) {
 function add_boxes_from_graph(adj) {
   // Loop through each node
   for (node in adj) {
-    boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, adj[node][1].length));
+    boxes.push(new DraggableBox(200, 200, 150, 150, node, adj[node][0].length, adj[node][1].length));
   }
   // Shuffle array
   shuffleArray(boxes);
@@ -429,10 +430,6 @@ function add_boxes_from_graph(adj) {
   }
 }
 
-
-  
-
-
 function setup() {
   let canvasElm = createCanvas(document.getElementById("canvasElm").offsetWidth, windowHeight);
   canvasElm.parent("canvasElm")
@@ -440,7 +437,6 @@ function setup() {
   song.play()
   mainGUI = new GUI()
 
-  background('rgba(0,0,0,0)');
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Output", 1, 3));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort one half", 4, 1));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort the other half", 2, 2));
@@ -454,7 +450,6 @@ function setup() {
 function draw() {
   // Clear screen
   clear();
-  background('rgba(0,0,0,0)');
 
   // Check if mouse is over one of the elements
   if (current_box != null) {
@@ -602,5 +597,4 @@ function windowResized() {
     }
   }
   clear();
-  background('rgba(0,0,0,0)');
 }
