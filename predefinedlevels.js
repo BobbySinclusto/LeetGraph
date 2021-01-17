@@ -19,8 +19,23 @@ level2 =
     "Output":[["Choose list half that contains the element"],[]]
 };
 
+level3 =
+{
+    "Reverse a string (String)":[[],["first character of current string","Reverse the (0,n-1) substring of string"]],
+    "first character of current string":[["Reverse a string (String)"],[]],
+    "Reverse the (0,n-1) substring of string" : [["Reverse a string (String)"] , []]
+};
+
+level4 =
+{
+    "Reverse a string (String)":[[],["first character of current string","Reverse the (0,n-1) substring of string"]],
+    "first character of current string":[["Reverse a string (String)"],[]],
+    "Reverse the (0,n-1) substring of string" : [["Reverse a string (String)"] , []]
+};
+
 all_levels = {
-    "Problem 1" : [level1, "Problem text"],
-    "Problem 2" : [level2, "stuff"]
+    "Problem 1" : [level1, "Use the block abstractions to sort a list!\nFor example [2,3,1,4] should be sorted to [1,2,3,4]"],
+    "Problem 2" : [level2, "Use the blocks to implement binary search!"],
+    "Problem 3" : [level3, "Use the blocks to reverse a string!"]
 }
 
