@@ -6,7 +6,7 @@ window.onload = function() {
     }
     
     document.getElementById("playGame").onclick = () => {
-        window.location = "http://leetgraph.tech/hacky-heap/game.html"
+        window.location = "http://leetgraph.tech/game.html"
     }
 
 
