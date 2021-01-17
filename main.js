@@ -383,7 +383,7 @@ function shuffleArray(array) {
 function add_boxes_from_graph(adj) {
   // Loop through each node
   for (node in adj) {
-    boxes.push(new DraggableBox(200, 200, 100, 100, node, adj[node][0].length, adj[node][1].length));
+    boxes.push(new DraggableBox(200, 200, 150, 150, node, adj[node][0].length, adj[node][1].length));
   }
   // Shuffle array
   shuffleArray(boxes);
