@@ -194,14 +194,17 @@ class DraggableBox {
 
 class GUI {
   constructor() {
+    document.getElementById("problemH1").innerText = levelSelector.currentLevel
+    document.getElementById("problemText").innerText = levelSelector.levelCollection.levelsText[levelSelector.currentLevel]
     this.addButtons()
   }
 
   addButtons() {
     this.GUIarray = []
     
+    // this is a bait! It validates instead.
     let startButton = document.createElement('button');
-    startButton.textContent = "Start Game"
+    startButton.textContent = "Validate"
     startButton.className = 'btn btn-primary'
     startButton.style = "position: absolute;top:50px; left:200px"
     startButton.onclick = this.startGame.bind(this)
@@ -237,7 +240,9 @@ class GUI {
   }
 
   startGame(thi) {
-    validatePuzzle(level1);
+    
+    let adj_list = levelSelector.levelCollection.levels[levelSelector.currentLevel]
+    alert(validatePuzzle(adj_list));
     // console.log("bruh")
     // this.removeAllButtons()
     // clear()
@@ -305,12 +310,12 @@ function validatePuzzle(expectedResults){
       }
       if (!key_is_in_box_connections) {
         // If nothing matches return false
-        print("not valid");
-        return false;
+        return "not valid"
+        
       }
     }
   }
-  return true;
+  return "valid!"
 }
 
 class SelectorGUI {
@@ -335,7 +340,8 @@ class SelectorGUI {
   <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="dropdownMenuButton">
     ${linkText}
   </ul>`
-
+    let adj_list = this.levelCollection.levels[this.currentLevel]
+    add_boxes_from_graph(adj_list);
     selectElm.style = "position: absolute;top:50px; left:52px"
 
     document.getElementById("rightCol").appendChild(selectElm)
@@ -350,6 +356,9 @@ class SelectorGUI {
     return function ()  {
       console.log("time to change level!",levelID)
       this.currentLevel = levelID
+      let adj_list = this.levelCollection.levels[this.currentLevel];
+      boxes = [];
+      add_boxes_from_graph(adj_list);
       document.getElementById("problemH1").innerText = this.currentLevel
       document.getElementById("problemText").innerText = this.levelCollection.levelsText[levelID]
       // change problem text and current level!
@@ -431,8 +440,7 @@ function setup() {
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort one half", 4, 1));
   // boxes.push(new DraggableBox(200, 200, 100, 100, "Sort the other half", 2, 2));
 
-  // Temporary debugging
-  add_boxes_from_graph(level1);
+  
   
 }
 
