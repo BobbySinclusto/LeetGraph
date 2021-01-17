@@ -4,8 +4,8 @@
 LeetGraph is a website that allows you learn how to think with abstractions! The project is done with Vanilla JavaScript/HTML/CSS in combinations with the Bootstrap framework. 
 
 ## Links:
-[LeetGraph.tech](http://www.leetgraph.tech)
-[Devpost](https://devpost.com/software/leetgraph)
+- [LeetGraph.tech](http://www.leetgraph.tech)
+- [Devpost](https://devpost.com/software/leetgraph)
 
 ## Demo Images
 ![Alt text](screenshot1.png "Homepage")
