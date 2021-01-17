@@ -6,7 +6,7 @@ window.onload = function() {
     }
     
     document.getElementById("playGame").onclick = () => {
-        window.location = "index.html"
+        window.location = "game.html"
     }
 
 

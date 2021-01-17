@@ -1,44 +1,100 @@
-body, html {
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-  }
-  .container-fluid {
-      margin: 0;
-      padding: 0;
-  }
-  .left,
-  .right {
-    height: 100vh;
-    overflow: hidden;
-    text-align: center;
-  }
 
-#yesover {
-    overflow-y: auto; 
-    color:rgb(233, 233, 233);
-    font-family: sans-serif;
-    font-size: x-large;
-    line-height: 200%;
+h1 {
+    font-family: "Lucida Bright", Georgia, serif;
+    font-size: 6vw;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 700;
+    line-height: 23px;
+    color: rgb(225, 227, 198);
 }
 
-html, div {
-    background-color: rgb(21, 20, 20);
+h3 {
+    font-family: "Lucida Bright", Georgia, serif;
+    font-size: 14px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 700;
+    line-height: 15.4px;
+}
+
+button {
+    font-family: "Lucida Bright", Georgia, serif;
+    font-size: 20px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 700;
+    line-height: 23px;
+    color: rgb(225, 227, 198);
+    background-color: transparent;
+    border-color: antiquewhite;
+    border-style: solid;
+    padding-left: 3%;
+    padding-right: 3%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    transition-duration: 0.4s;
+}
+button:hover {
+    background-color: #429345; /* Green */
+    color: rgb(237, 225, 225);
+  }
+
+p {
+    font-family: "Lucida Bright", Georgia, serif;
+    font-size: 3vw;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 100;
+    line-height: 23px;
+    color: rgb(225, 227, 198);
+}
+
+blockquote {
+    font-family: "Lucida Bright", Georgia, serif;
+    font-size: 17.5px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 25px;
+}
+
+pre {
+    font-family: "Lucida Bright", Georgia, serif;
+    font-size: 13px;
+    font-style: normal;
+    font-variant: normal;
+    font-weight: 400;
+    line-height: 18.5714px;
 }
 
 canvas {
+    position: fixed;
+    z-index: -1;
+}
+#interactive {
+    position: fixed;
+    
     width: 100%;
     height: 100%;
-    display: block;
-    overflow: hidden;
+    z-index: -2;
 }
-h1 {
-    color:rgb(233, 233, 233);
-    font-family: sans-serif;
-    font-size: x-large;
-    line-height: 200%;
+body {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(13, 22, 28);
+    margin: 0 !important;
+    padding: 0 !important;
 }
+html {
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.name {
 
-#uiBox {
-    width:100%;
+
+    text-align: center;
 }
