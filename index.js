@@ -2,11 +2,11 @@ window.onload = function() {
     console.log("welcome to the about page!")
 
     document.getElementById("downloadResumes").onclick = () => {
-        window.location = "Arshia-and-Allen-Resume.pdf"
+        window.location = "http://leetgraph.tech/Arshia-and-Allen-Resume.pdf"
     }
     
     document.getElementById("playGame").onclick = () => {
-        window.location = "game.html"
+        window.location = "http://leetgraph.tech/game.html"
     }
 
 
